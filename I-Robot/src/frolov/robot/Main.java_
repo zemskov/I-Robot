@@ -1,0 +1,926 @@
+package frolov.robot;
+
+
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.tree.*;
+import org.apache.commons.logging.*;
+
+
+
+public class Main extends JFrame{
+   private static final long serialVersionUID = -8510057476499416417L;
+   
+   
+   private static Log log = LogFactory.getLog(Main.class);
+   private static final String LOG = "[Main] ";
+   
+   
+
+   private JScrollPane scrollerTree;
+
+   private static final String NAME_ROOT = "Профили";
+   private static final String NAME_NO_PROFILES = "Нет профилей";
+
+   private static DefaultMutableTreeNode trnodeTOP = new DefaultMutableTreeNode(NAME_ROOT);
+
+   private static JToolBar toolbar;
+   private static JTree tree;
+
+   private static JButton btnTopAdd;
+   private static JButton btnTopRemove;
+   private static JButton btnProfileSettings;
+   
+
+   private static final ImageIcon iconAdd;
+   private static final ImageIcon iconRemove;
+   private static final ImageIcon iconSettings;
+   private static final ImageIcon iconWating;
+   
+   
+   private static final JDialog dlgWaiting = new JDialog();
+
+   static{
+      iconAdd = new ImageIcon(JFrame.class.getResource("/icon-add.png"));
+      iconRemove = new ImageIcon(JFrame.class.getResource("/icon-remove.png"));
+      iconSettings = new ImageIcon(JFrame.class.getResource("/icon-settings.png"));
+      iconWating = new ImageIcon(JFrame.class.getResource("/loaderB32.gif"));
+      
+      
+      JPanel panel = new JPanel();
+      
+      //panel.setBackground(new java.awt.Color(230, 230, 255));
+      
+      JLabel jLabel = new JLabel(" Please wait...");
+      jLabel.setIcon(iconWating);
+      panel.add(jLabel);
+      dlgWaiting.add(panel);
+      dlgWaiting.setModalExclusionType(JDialog.ModalExclusionType.TOOLKIT_EXCLUDE);
+
+      dlgWaiting.setUndecorated(true);
+      dlgWaiting.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+
+      dlgWaiting.setSize(130, 45);
+      dlgWaiting.setAlwaysOnTop(true);
+      dlgWaiting.setLocationRelativeTo(null);
+      dlgWaiting.setResizable(false);
+
+      panel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(100, 100, 100)));
+   }
+   
+   
+
+   private static int lastX = -1;
+   private static int lastY = -1;
+   
+   private static final Map<Long,   FrameLucy> mapWID2Nura  = new HashMap<Long, FrameLucy>();
+   private static final Map<String, FrameLucy> mapName2Nura = new HashMap<String, FrameLucy>();
+
+//   private static final Map<String, ClientCode> mapClientAccounts = new MineMapClientAccounts();
+
+//   private static class MineMapClientAccounts extends HashMap<String, ClientCode>{
+//      private static final long serialVersionUID = -7309715846216541173L;
+//
+//
+//
+//
+//
+//      @Override
+//      public ClientCode put(String sAccount, ClientCode clientCode){
+//         return super.put(sAccount, clientCode);
+//      }
+//
+//
+//
+//
+//
+//      @Override
+//      public ClientCode get(Object sAccount){
+//         ClientCode clientCode = super.get(sAccount);
+//
+//         if(clientCode == null){
+//            clientCode = new ClientCode();
+//            super.put("" + sAccount, clientCode);
+//         }
+//
+//         return clientCode;
+//      }
+//   }
+//
+//   private static class ClientCode extends HashMap<String, StockClass>{
+//      private static final long serialVersionUID = 2125583489712834389L;
+//
+//
+//
+//
+//
+//      public StockClass put(String sClientCode, StockClass stockClass){
+//         return super.put(sClientCode, stockClass);
+//      }
+//
+//
+//
+//
+//
+//      @Override
+//      public StockClass get(Object sClientCode){
+//         StockClass stockClass = super.get(sClientCode);
+//
+//         if(stockClass == null){
+//            stockClass = new StockClass();
+//            super.put("" + sClientCode, stockClass);
+//         }
+//
+//         return stockClass;
+//      }
+//   }
+//
+//   private static class StockClass extends HashMap<String, FrameLucy>{
+//      private static final long serialVersionUID = 6243139349250781657L;
+//
+//      // public FrameLucy put(String sClientCode, FrameLucy stockClass){
+//      // return super.put(sClientCode, stockClass);
+//      // }
+//      //
+//      //
+//      // public FrameLucy get(String sClientCode){
+//      // FrameLucy stockClass = super.get(sClientCode);
+//      //
+//      // if(stockClass == null){
+//      // stockClass = new FrameLucy();
+//      // super.put(sClientCode, stockClass);
+//      // }
+//      //
+//      // return stockClass;
+//      // }
+//   }
+
+
+   private static final List<Thread> listBarWorkers = new ArrayList<Thread>();
+
+
+
+
+
+   public Main(){
+//      Calendar calendar = new GregorianCalendar();
+//      // calendar.setTimeZone(TimeZone.getTimeZone("Russia/Moscow"));
+//      calendar.setTime(new Date());
+//      calendar.set(calendar.get(Calendar.YEAR), 9, 1, 0, 0, 0);
+//
+//      if(calendar.getTimeInMillis() < System.currentTimeMillis()){
+//         showError("Инженерная сборка, время работы до 01.09.2013", null);
+//         System.exit(-1);
+//      }
+
+      toolbar = new JToolBar();
+      btnTopAdd = new JButton(iconAdd);
+      btnTopAdd.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent arg0){
+            Object[] arrobjSelectionPath = tree.getSelectionPath().getPath(); 
+            
+            if(arrobjSelectionPath.length == 1){
+               DlgNewProfile dlgNewProfile = new DlgNewProfile();
+               dlgNewProfile.setLocationRelativeTo(null);
+               dlgNewProfile.setAlwaysOnTop(true);
+               dlgNewProfile.setVisible(true);
+            }
+            else if(arrobjSelectionPath.length == 4){
+               addWindow();
+            }
+         }
+      });
+      
+      
+      toolbar.add(btnTopAdd);
+
+      btnTopRemove = new JButton(iconRemove);
+      btnTopRemove.setEnabled(false);
+
+      btnTopRemove.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent paramActionEvent){
+//            blockOperations();
+//
+//            pleaseWait();
+//
+//            for(FrameLucy frmLucy : mapClientAccounts.get(getPProfileKey().clientAccount)
+//                     .get(getPProfileKey().clientCode).values()){
+//               try{
+//                  frmLucy.workerFile.interrupt();
+//               }
+//               catch (Throwable e){
+//               }
+//               try{
+//                  frmLucy.workerCurrentPrice.interrupt();
+//               }
+//               catch (Throwable e){
+//               }
+//               frmLucy.dispose();
+//            }
+//
+//            MongoMain.removeProfile(getPProfileKey());
+//
+//            tree.clearSelection();
+//            reloadTree();
+//            disableTopButtons();
+//
+//            allowOperations();
+//            
+//            canGo();
+         }
+      });
+
+      toolbar.add(btnTopRemove);
+
+      toolbar.add(Box.createHorizontalGlue());
+
+      btnProfileSettings = new JButton(iconSettings);
+      btnProfileSettings.setEnabled(false);
+      toolbar.add(btnProfileSettings);
+
+      scrollerTree = new javax.swing.JScrollPane();
+
+      tree = new JTree(trnodeTOP);
+
+      tree.addTreeSelectionListener(new TreeSelectionListener(){
+         public void valueChanged(TreeSelectionEvent paramTreeSelectionEvent){
+            TreePath tp = paramTreeSelectionEvent.getNewLeadSelectionPath();
+            clickTree(tp);
+         }
+      });
+
+      tree.addMouseListener(new MouseAdapter(){
+         @Override
+         public void mousePressed(MouseEvent me){
+            
+//            System.out.println(me.getClickCount());
+            
+            
+            if(me.getClickCount() > 1){
+               addWindow();
+               // TreePath selPath = tree.getPathForLocation(me.getX(),
+               // me.getY());
+               // System.out.println(selPath);
+            }
+            else{
+               TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
+               clickTree(tp);
+            }
+//
+//            me.consume();
+         }
+      });
+
+      //
+      //
+      // tree.addKeyListener(new KeyAdapter() {
+      // public void keyPressed(KeyEvent me){
+      // // TreePath tp = tree.getPathForLocation(me., me.getY());
+      //
+      // System.out.println();
+      // }
+      // });
+
+      // DefaultMutableTreeNode currentNode = treeTop.getNextNode();
+      // do {
+      // if (currentNode.getLevel()==1)
+      // myTree.expandPath(new TreePath(currentNode.getPath()));
+      // currentNode = currentNode.getNextNode();
+      // }
+      // while (currentNode != null);
+
+      setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+      setLocationByPlatform(true);
+
+      getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+
+      toolbar.setPreferredSize(new java.awt.Dimension(200, 30));
+      toolbar.setMinimumSize(new java.awt.Dimension(200, 30));
+      toolbar.setSize(new java.awt.Dimension(200, 30));
+      getContentPane().add(toolbar);
+
+      scrollerTree.setViewportView(tree);
+      scrollerTree.setMinimumSize(new java.awt.Dimension(200, 37));
+
+      getContentPane().add(scrollerTree);
+      //pack();
+
+      reloadTree();
+
+      //Let's select the fisr element
+      tree.setSelectionPath(tree.getPathForRow(0));
+
+      allowOperations();
+   }
+
+
+
+
+
+   /**
+    * @param args
+    *           the command line arguments
+    */
+   public static void main(String args[]) throws Exception{
+      
+      //Only one instance
+      try{
+         new ServerSocket(12345, 1, null);
+      }
+      catch (Exception e){
+         System.exit(0);
+      }
+      
+      // We need ".", not "," in numbers
+      Locale.setDefault(Locale.US);
+
+      InterfaceHelper.setLookAndFeel();
+
+      File file = new File(".");
+      String sBasePath = file.getAbsolutePath().replaceAll("\\\\", "/");
+      sBasePath = sBasePath.substring(0, sBasePath.length() - 1);
+
+      SystemUtils.addClassPath(sBasePath + "lib");
+
+      // Let's restore the state
+      for(MProfile mProfile : MongoMain.getProfiles()){
+         
+         //First we need to reinitilize factories
+         try{
+            HibernetMain.initFactory(mProfile);
+         }
+         catch (Throwable e){
+            showError("Ошибка подключения к Базе: " + e.toString(), e);
+            System.exit(-1);
+         }
+
+         try{
+            RandomAccessFile rafile = new RandomAccessFile(mProfile.files.tri, "rw");
+            rafile.setLength(0);
+            rafile.close();
+            
+            rafile = new RandomAccessFile(mProfile.files.tro, "rw");
+            rafile.setLength(0);
+            rafile.close();
+         }
+         catch (Exception e){
+            showError("Не могу открыть на запись:\n" + mProfile.files.tri + "\n"
+                     + mProfile.files.tro, e);
+            System.exit(-1);
+         }
+
+         for(MNuraWindow mNuraWindow : MongoMain.getWindows(mProfile)){
+
+               FrameLucy frameLucy = new FrameLucy(mProfile,
+                                                   MongoMain.getStockElement(mProfile, new PStockKey(mNuraWindow.clas, mNuraWindow.code)),
+                                                   mNuraWindow.WID,
+                                                   mNuraWindow.name);
+               
+            frameLucy.setLocation(mNuraWindow.x, mNuraWindow.y);
+            frameLucy.setSize(mNuraWindow.w, mNuraWindow.h);
+            frameLucy.setAlwaysOnTop(true);
+               
+            if(mNuraWindow.visiable){
+
+               frameLucy.setVisible(true);
+
+               lastX = mNuraWindow.x;
+               lastY = mNuraWindow.y;
+
+               lastX += InterfaceConstants.WINDOW_NEW_OFFSET;
+               lastY += InterfaceConstants.WINDOW_NEW_OFFSET;
+
+            }
+            else{
+               frameLucy.setVisible(false);
+            }
+               
+            mapWID2Nura.put(mNuraWindow.WID, frameLucy);
+            mapName2Nura.put(mNuraWindow.clas
+                             + "_" + mNuraWindow.code
+                             + "_" + mNuraWindow.name,
+                             frameLucy);
+         }
+      }
+
+
+      java.awt.EventQueue.invokeLater(new Runnable(){
+         public void run(){
+            Main main = new Main();
+            main.addComponentListener(new ComponentListener(){
+               public void componentHidden(ComponentEvent e){
+                  Main main = (Main) e.getComponent();
+                  MongoMain.saveMainCoordinates(main.getX(),
+                                                main.getY(),
+                                                main.getSize().width,
+                                                main.getSize().height);
+               }
+               public void componentMoved(ComponentEvent e){
+                  Main main = (Main) e.getComponent();
+                  MongoMain.saveMainCoordinates(main.getX(),
+                                                main.getY(),
+                                                main.getSize().width,
+                                                main.getSize().height);
+               }
+               public void componentResized(ComponentEvent e){
+                  Main main = (Main) e.getComponent();
+                  MongoMain.saveMainCoordinates(main.getX(),
+                                                main.getY(),
+                                                main.getSize().width,
+                                                main.getSize().height);
+               }
+               public void componentShown(ComponentEvent e){
+                  Main main = (Main) e.getComponent();
+                  MongoMain.saveMainCoordinates(main.getX(),
+                                                main.getY(),
+                                                main.getSize().width,
+                                                main.getSize().height);
+               }
+            });
+            
+            
+            
+            main.setLocationRelativeTo(null);
+            main.setAlwaysOnTop(true);
+            main.setVisible(true);
+            
+            MSettings mSettings = MongoMain.getSettings();
+            main.setLocation(mSettings.position.x, mSettings.position.y);
+            main.setSize(mSettings.position.w, mSettings.position.h);
+            
+//TODO            
+//            FrmSpredder frmSpredder = new FrmSpredder();
+//            
+//            frmSpredder.setLocationRelativeTo(null);
+//            frmSpredder.setAlwaysOnTop(true);
+//            frmSpredder.setVisible(true);
+         }
+      });
+   }
+
+
+
+   
+   public static void reloadTreeOutside(){
+      try{
+         SwingUtilities.invokeAndWait(new Runnable(){
+            public void run(){
+               reloadTree();
+            }
+         });
+      }
+      catch (Throwable e){
+         throw new Error(e);
+      }
+   }
+   
+
+
+   private static void reloadTree(){
+      trnodeTOP.removeAllChildren();
+
+      for(Thread threadBarWorker : listBarWorkers){
+         threadBarWorker.interrupt();
+      }
+      listBarWorkers.clear();
+
+      tree.setModel(new DefaultTreeModel(trnodeTOP));
+
+      for(MProfile mProfile : MongoMain.getProfiles()){
+         DefaultMutableTreeNode tr_nodeProfile =
+                  new DefaultMutableTreeNode(encodeAccount(mProfile.clientAccount, mProfile.clientCode));
+         trnodeTOP.add(tr_nodeProfile);
+
+         // Load stocks here
+
+         Map<String, DefaultMutableTreeNode> map =
+                                            new HashMap<String, DefaultMutableTreeNode>();
+
+         List<MStockElement> listMStockElement = MongoMain.getStockElements(mProfile);
+         for(MStockElement mStockElement : listMStockElement){
+            DefaultMutableTreeNode treeNode = map.get(mStockElement.clas);
+
+            if(treeNode == null){
+               treeNode = new DefaultMutableTreeNode(mStockElement.clas);
+               map.put(mStockElement.clas, treeNode);
+               tr_nodeProfile.add(treeNode);
+            }
+
+            DefaultMutableTreeNode treeNodeCode = new DefaultMutableTreeNode(mStockElement.code);
+            treeNode.add(treeNodeCode);
+            
+            for(MNuraWindow mNuraWindow : MongoMain.getWindows(mProfile, mStockElement)){
+               treeNodeCode.add(new DefaultMutableTreeNode(mNuraWindow.name));
+            }
+            
+         }
+      }
+
+      if(tree.getModel().getChildCount(trnodeTOP) == 0){
+         DefaultMutableTreeNode trnodeNoProfiles =
+                                             new DefaultMutableTreeNode(NAME_NO_PROFILES);
+         trnodeTOP.add(trnodeNoProfiles);
+         tree.setEnabled(false);
+      }
+      else{
+         tree.setEnabled(true);
+      }
+      tree.expandRow(0);
+   }
+
+
+
+
+
+   private static String encodeAccount(String sAccount, String sCode){
+      return sAccount + " [" + sCode + "]";
+   }
+
+
+
+
+
+   private static PProfileKey getProfileKey(){
+      String sProfile = "" + tree.getSelectionPath().getPath()[1];
+
+      sProfile = sProfile.replaceAll("\\[", "").replaceAll("\\]", "");
+      String[] arrStrProfile = sProfile.split(" ");
+
+      PProfileKey pProfileKey = new PProfileKey(arrStrProfile[0], arrStrProfile[1]);
+
+      return pProfileKey;
+   }
+
+
+
+
+
+   private static PStockKey getStockKey(){
+      PStockKey pStockKey = new PStockKey("" + tree.getSelectionPath().getPath()[2], ""
+               + tree.getSelectionPath().getPath()[3]);
+
+      return pStockKey;
+   }
+
+
+
+
+   private void validateTopButtons(TreePath tp){
+      if(tp.getPath().length == 1 || tp.getPath().length == 4){
+         btnTopAdd.setEnabled(true);
+      }
+      else{
+         btnTopAdd.setEnabled(false);
+      }
+      
+      if(tp.getPath().length == 2 || tp.getPath().length == 5){
+         btnTopRemove.setEnabled(true);
+      }
+      else{
+         btnTopRemove.setEnabled(false);
+      }
+      
+//      btnProfileSettings.setEnabled(false);
+   }
+
+
+   
+   
+
+   private void clickTree(TreePath tp){
+      // TODO
+      
+      if(tp == null){
+         //No idea where does it come from
+         //But let's skip it here
+         return;
+      }
+      
+      try{
+         if(tp.getPath().length == 2){
+            // We at the Profiles level
+
+         }
+         else if(tp.getPath().length == 5){
+            // We at the stock code level
+
+            PStockKey pStockKey = getStockKey();
+
+
+            FrameLucy frameLucy = mapName2Nura.get(pStockKey.clas
+                                                   + "_" + pStockKey.code
+                                                   + "_" + tp.getPath()[tp.getPath().length - 1]);
+            
+            frameLucy.setVisible(true);
+            frameLucy.toFront();
+            frameLucy.repaint();
+         }
+            
+         validateTopButtons(tp);
+      }
+      catch (Exception e){
+         log.error(LOG, e);
+      }
+   }
+   
+   
+   
+   
+   
+   
+   
+   private void addWindow(){
+      PProfileKey pProfileKey = getProfileKey();
+      PStockKey   pStockKey   = getStockKey();
+      
+      String sName;
+      
+      while(true) {
+         sName = (String) JOptionPane.showInputDialog(Main.this,
+                                                      "Введите имя окна:",
+                                                      "Создание нового окна",
+                                                      JOptionPane.PLAIN_MESSAGE,
+                                                      null,
+                                                      null,
+                                                      "Новое окно " + pStockKey.code
+                                                     );
+      
+         if(sName == null){
+            return;
+         }
+         else if(MongoMain.checkWindowName(pProfileKey, pStockKey, sName)){
+            JOptionPane.showMessageDialog(Main.this,
+                     "Окно с таким именем уже существует!",
+                     "Ошибка",
+                     JOptionPane.ERROR_MESSAGE);                     
+         }
+         else{
+            break;
+         }
+      }
+      
+      
+      
+      
+      MNuraWindow mNuraWindow = MongoMain.createNewWindow(pProfileKey,
+                                                          pStockKey,
+                                                          sName);
+      
+      FrameLucy frameLucy = new FrameLucy(MongoMain.getProfile(getProfileKey()),
+                                          MongoMain.getStockElement(pProfileKey, pStockKey),
+                                          mNuraWindow.WID,
+                                          mNuraWindow.name);
+      
+      mapWID2Nura.put(mNuraWindow.WID, frameLucy);
+      mapName2Nura.put(mNuraWindow.clas + "_" + mNuraWindow.code + "_" + mNuraWindow.name, frameLucy);               
+      
+
+      frameLucy.setAlwaysOnTop(true);
+      frameLucy.setLocationRelativeTo(null);
+
+       if(lastX < 0){
+          frameLucy.setLocationRelativeTo(null);
+       }
+       else{
+          frameLucy.setLocation(lastX, lastY);
+       }
+
+       frameLucy.setSize(675, 592);
+       frameLucy.setVisible(true);
+
+       lastX = frameLucy.getX();
+       lastY = frameLucy.getY();
+
+       lastX += InterfaceConstants.WINDOW_NEW_OFFSET;
+       lastY += InterfaceConstants.WINDOW_NEW_OFFSET;
+
+       java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+
+       if(lastX > screenSize.width / 2){
+          lastX = 30;
+       }
+       if(lastY > screenSize.height / 2){
+          lastY = 30;
+       }
+    
+    
+      frameLucy.setVisible(true);
+      frameLucy.toFront();
+      frameLucy.repaint();
+      
+//      DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
+//      DefaultMutableTreeNode nodeNew = new DefaultMutableTreeNode(mNuraWindow.name);
+//      node.add(nodeNew);
+//      
+//      tree.expandPath(new TreePath(node.getPath()));
+//      tree.setSelectionPath(new TreePath(nodeNew.getPath()));
+      
+      reloadTree();
+      for(Enumeration<?> eAccounts = ((TreeNode) tree.getModel().getRoot()).children(); eAccounts.hasMoreElements();){
+         DefaultMutableTreeNode tnAccount = (DefaultMutableTreeNode) eAccounts.nextElement();
+         
+         if(encodeAccount(pProfileKey.clientAccount, pProfileKey.clientCode)
+                  .equals("" + tnAccount)) {
+            tree.expandPath(new TreePath(tnAccount.getPath()));
+
+
+            for(Enumeration<?> eClass = tnAccount.children(); eClass.hasMoreElements();){
+               DefaultMutableTreeNode tnClass = (DefaultMutableTreeNode) eClass.nextElement();
+               
+               if(pStockKey.clas.equals("" + tnClass)){
+                  tree.expandPath(new TreePath(tnClass.getPath()));
+               
+                  for(Enumeration<?> eCode = tnClass.children(); eCode.hasMoreElements();){
+                     DefaultMutableTreeNode tnCode = (DefaultMutableTreeNode) eCode.nextElement();
+                     
+                     if(pStockKey.code.equals("" + tnCode)){
+                        tree.expandPath(new TreePath(tnCode.getPath()));
+                        
+                        for(Enumeration<?> eWnd = tnCode.children(); eWnd.hasMoreElements();){
+                           DefaultMutableTreeNode tnWnd = (DefaultMutableTreeNode) eWnd.nextElement();
+                           
+                           if(sName.equals("" + tnWnd)){
+                              tree.setSelectionPath(new TreePath(tnWnd.getPath()));
+                              break;
+                           }
+                        }
+                        break;
+                     }
+                  }
+                  break;
+               }
+            }
+            break;
+         }
+      }
+   }
+   
+   
+   
+   
+   
+   
+   
+   
+
+
+   
+   public static void showError(String sMessage){
+      showError(sMessage, null);
+   }
+   
+
+
+
+   public static void showError(String sMessage, Throwable e){
+      JFrame frame = new JFrame();
+      frame.setVisible(true);
+      frame.setLocationRelativeTo(null);
+
+      JOptionPane.showMessageDialog(frame, sMessage);
+
+      if(e == null){
+      }
+      else{
+         e.printStackTrace();
+      }
+   }
+
+
+
+   
+   public static void blockOperationsOutside(){
+      if(SwingUtilities.isEventDispatchThread()){
+         blockOperations();
+         return;
+      }
+      
+      
+      try{
+         SwingUtilities.invokeAndWait(new Runnable(){
+            public void run(){
+               blockOperations();
+            }
+         });
+      }
+      catch (Throwable e){
+         throw new Error(e);
+      }
+   }
+   
+
+
+
+
+   private static void blockOperations(){
+      toolbar.setEnabled(false);
+      for(java.awt.Component cmpnt : toolbar.getComponents()){
+         cmpnt.setEnabled(false);
+      }
+
+      tree.setEnabled(false);
+   }
+
+
+
+
+
+   public static void allowOperationsOutside(){
+      if(SwingUtilities.isEventDispatchThread()){
+         allowOperations();
+         return;
+      }
+
+      
+      try{
+         SwingUtilities.invokeAndWait(new Runnable(){
+            public void run(){
+               allowOperations();
+            }
+         });
+      }
+      catch (Throwable e){
+         throw new Error(e);
+      }
+   }
+   
+   
+   
+
+   
+   private static void allowOperations(){
+      toolbar.setEnabled(true);
+      btnTopAdd.setEnabled(true);
+
+      if((tree.getModel().getChildCount(trnodeTOP) == 0)|| NAME_NO_PROFILES.equalsIgnoreCase("" + trnodeTOP.getChildAt(0))){
+         tree.setEnabled(false);
+      }
+      else{
+         tree.setEnabled(true);
+      }
+   }
+
+
+
+   
+   public static void pleaseWaitOutside(){
+      if(SwingUtilities.isEventDispatchThread()){
+         pleaseWait();
+      }
+      else {
+         try{
+            SwingUtilities.invokeAndWait(new Runnable(){
+               public void run(){
+                  pleaseWait();
+               }
+            });
+         }
+         catch (Throwable e){
+            throw new Error(e);
+         }
+      }
+   }
+
+   
+
+
+
+   private static void pleaseWait(){
+      dlgWaiting.setVisible(true);
+   }
+
+   
+   
+
+   
+   
+   public static void canGoOutside(){
+      if(SwingUtilities.isEventDispatchThread()){
+         canGo();
+      }
+      else {
+         try{
+            SwingUtilities.invokeAndWait(new Runnable(){
+               public void run(){
+                  canGo();
+               }
+            });
+         }
+         catch (Throwable e){
+            throw new Error(e);
+         }
+      }
+   }
+   
+   
+
+
+
+   private static void canGo(){
+      dlgWaiting.setVisible(false);
+   }
+}

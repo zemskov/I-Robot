@@ -1,0 +1,27 @@
+<commands>
+    <command>
+       <name>Едем Вперед</name>
+       <code>E0</code>
+       <response></response>
+    </command>
+
+    <command>
+       <name>Прочесть датчики</name>
+       <code>32</code>
+       <response>
+       
+          <value>
+             <name>Датчик 0</name>
+             <type>int</type>
+             <length>1</length>
+          </value>
+          
+          <value>
+             <name>Датчик 1</name>
+             <type>int</type>
+             <length>1</length>
+          </value>
+          
+       </response>
+    </command>
+</commands>
