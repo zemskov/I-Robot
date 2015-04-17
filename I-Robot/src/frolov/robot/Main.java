@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import org.apache.commons.logging.*;
+import frolov.robot.serial_port.*;
 import frolov.robot.ui.*;
 
 
@@ -49,10 +50,6 @@ public class Main extends JFrame{
    
 
    public Main(){
-//      JFrame frame = new JFrame();
-//      frame.setVisible(true);
-//      frame.setLocationRelativeTo(null);
-//      JOptionPane.showMessageDialog(frame, "пизда");
    }
 
 
@@ -86,17 +83,22 @@ public class Main extends JFrame{
       
       
       
-      InterfaceHelper.showWaiting("Пизда");
+      InterfaceHelper.showWaiting("Ишем Робота...");
       
-      try{
-         Thread.sleep(4000);
-      }
-      catch (InterruptedException e){
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
+      String sPort = SerialPortHelper.findRobot();
       
       InterfaceHelper.hideWaiting();
+
       
+      JFrame frame = new JFrame();
+      frame.setVisible(true);
+      frame.setLocationRelativeTo(null);
+      
+      if(sPort == null) {
+         JOptionPane.showMessageDialog(frame, "Робот не найден.");
+      }
+      else {
+         JOptionPane.showMessageDialog(frame, "Робот найден на порту " + sPort);
+      }
    }
 }
