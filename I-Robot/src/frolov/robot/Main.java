@@ -5,7 +5,9 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import org.apache.commons.logging.*;
-import frolov.robot.serial_port.*;
+import org.springframework.context.*;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.*;
 import frolov.robot.ui.*;
 
 
@@ -80,12 +82,19 @@ public class Main extends JFrame{
       
       
       
+
+      ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
+//      ApplicationContext ctx = new AnnotationConfigApplicationContext(Configs.class);      
+      Commands commands = ctx.getBean("commands", Commands.class);       
+      //Print print = (Print) context.getBean("print");
+      //print.showSquare();      
       
       
       
       InterfaceHelper.showWaiting("Ишем Робота...");
       
-      String sPort = SerialPortHelper.findRobot();
+      
+      String sPort = commands.portDetecter.findRobot();
       
       InterfaceHelper.hideWaiting();
 

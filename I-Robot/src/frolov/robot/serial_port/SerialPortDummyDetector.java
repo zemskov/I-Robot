@@ -3,11 +3,12 @@ package frolov.robot.serial_port;
 import java.util.*;
 import jssc.*;
 import org.apache.commons.logging.*;
+import frolov.robot.*;
 
 
 
-public class SerialPortHelper{
-   private static Log log = LogFactory.getLog(SerialPortHelper.class);
+public class SerialPortDummyDetector implements IPortDetector{
+   private static Log log = LogFactory.getLog(SerialPortDummyDetector.class);
    private static final String LOG = "[Detector] ";
    
    
@@ -17,7 +18,7 @@ public class SerialPortHelper{
    private static final int MAX_DETECTION_TIME = 10000;
    
 
-   public static String findRobot(){
+   public String findRobot(){
       String[] arrPorts = SerialPortList.getPortNames();
       
       List<PortChecker> listCheckers = new ArrayList<PortChecker>();
@@ -30,8 +31,8 @@ public class SerialPortHelper{
 
       //Let's wait for 10 sec
       try{
-         synchronized(SerialPortHelper.class){
-            SerialPortHelper.class.wait(MAX_DETECTION_TIME);
+         synchronized(SerialPortDummyDetector.class){
+            SerialPortDummyDetector.class.wait(MAX_DETECTION_TIME);
          }
       }
       catch(Exception e){
@@ -67,9 +68,9 @@ public class SerialPortHelper{
    
    
    private static void gotIt(String sPortName){
-      synchronized(SerialPortHelper.class){
-         SerialPortHelper.sPortName = sPortName;
-         SerialPortHelper.class.notifyAll();
+      synchronized(SerialPortDummyDetector.class){
+         SerialPortDummyDetector.sPortName = sPortName;
+         SerialPortDummyDetector.class.notifyAll();
       }
    }
    
@@ -151,7 +152,7 @@ public class SerialPortHelper{
          public void serialEvent(SerialPortEvent event){
             if(event.isRXCHAR() && event.getEventValue() > 0){
                //log.debug(LOG + portChecker.portName);
-               SerialPortHelper.gotIt(portChecker.portName);
+               SerialPortDummyDetector.gotIt(portChecker.portName);
                
                // try{
                // Получаем ответ от устройства, обрабатываем данные и т.д.

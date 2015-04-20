@@ -2,12 +2,19 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/jssc.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/swtgraphics2d.jar"/>
-	<classpathentry kind="lib" path="lib/tinycp.jar"/>
-	<classpathentry kind="lib" path="lib/tinylaf.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jssc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swing-layout-1.0.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swtgraphics2d.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tinycp.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tinylaf.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-beans-4.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-context-4.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-context-support-4.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-core-4.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-aop-4.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-aspects-4.1.1.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spring-expression-4.1.1.RELEASE.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

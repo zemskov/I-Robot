@@ -12,6 +12,8 @@
    
 
    <group>
+      <name>Движение робота</name>
+      
       <command>
          <name>Прочесть датчики</name>
          <code>32</code>
