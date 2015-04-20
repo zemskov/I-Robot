@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 public class Configs{
    
    
-   @Bean(name="commands")
-   public Commands commands(){
-      return new Commands();
-   }
+//   @Bean(name="commands")
+//   public Commands commands(){
+//      return new Commands();
+//   }
 
 }

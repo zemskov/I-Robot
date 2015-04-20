@@ -1,30 +1,17 @@
 package frolov.robot;
 
+import java.util.*;
+
 
 public class Commands{
  
-   public IPortDetector portDetecter;
+   public final IPortDetector portDetecter;
+   public final Map<String, ICommand> mapCommands;
 
-   public Commands(){
-   }
-   
-   
-   public Commands(IPortDetector portDetecter){
-      super();
+
+   public Commands(IPortDetector portDetecter, Map<String, ICommand> mapCommands){
       this.portDetecter = portDetecter;
+      this.mapCommands = mapCommands;
    }
-
-
-   public IPortDetector getPortDetecter(){
-      return portDetecter;
-   }
-
-
-   public void setPortDetecter(IPortDetector portDetecter){
-      this.portDetecter = portDetecter;
-   }
-   
-   
-   
 }
 

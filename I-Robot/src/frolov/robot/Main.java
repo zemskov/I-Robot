@@ -86,8 +86,6 @@ public class Main extends JFrame{
       ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
 //      ApplicationContext ctx = new AnnotationConfigApplicationContext(Configs.class);      
       Commands commands = ctx.getBean("commands", Commands.class);       
-      //Print print = (Print) context.getBean("print");
-      //print.showSquare();      
       
       
       
