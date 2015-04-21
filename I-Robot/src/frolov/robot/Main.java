@@ -89,7 +89,7 @@ public class Main extends JFrame{
 
       ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
 //      ApplicationContext ctx = new AnnotationConfigApplicationContext(Configs.class);      
-      final Commands commands = ctx.getBean("commands", Commands.class);       
+      final RoboConfig commands = ctx.getBean("commands", RoboConfig.class);       
       
       
       
