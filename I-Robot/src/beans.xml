@@ -19,19 +19,19 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
       <constructor-arg ref="detecter_dummy"/>
       <constructor-arg>
          <map>
-            <entry key="move_forward">
+            <entry key="Ехать вперед">
                <bean id="command_move_forward" class="frolov.robot.serial_port.CommandMoveForward">
-                  <constructor-arg value="EO" />
+                  <constructor-arg value="forward.xml" />
                </bean>
             </entry>
-            <entry key="left_turn">
+            <entry key="Поворот налево">
                <bean id="left_turn" class="frolov.robot.serial_port.CommandLeftTurn">
-                  <constructor-arg value="FO" />
+                  <constructor-arg value="left.xml" />
                </bean>
             </entry>
-            <entry key="right_turn">
+            <entry key="Поворот направо">
                <bean id="right_turn" class="frolov.robot.serial_port.CommandRightTurn">
-                  <constructor-arg value="9D" />
+                  <constructor-arg value="right.xml" />
                </bean>
             </entry>
          </map>
