@@ -1,0 +1,16 @@
+﻿<command>
+   <code>F0</code>
+   <response>
+       <value>
+          <name>Датчик 0</name>
+          <type>int</type>
+          <length>1</length>
+       </value>
+
+       <value>
+          <name>Датчик 1</name>
+          <type>int</type>
+          <length>1</length>
+       </value>
+   </response>
+</command>

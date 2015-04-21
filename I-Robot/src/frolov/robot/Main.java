@@ -1,6 +1,8 @@
 package frolov.robot;
 
 
+import java.awt.*;
+import java.awt.event.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
@@ -87,7 +89,7 @@ public class Main extends JFrame{
 
       ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
 //      ApplicationContext ctx = new AnnotationConfigApplicationContext(Configs.class);      
-      Commands commands = ctx.getBean("commands", Commands.class);       
+      final Commands commands = ctx.getBean("commands", Commands.class);       
       
       
       
@@ -101,13 +103,13 @@ public class Main extends JFrame{
 
          if(serialPort == null) {
             if(JOptionPane.showOptionDialog(null, 
-                     "Робот не найден.", 
-                     "Ошибка", 
-                     JOptionPane.OK_CANCEL_OPTION, 
-                     JOptionPane.ERROR_MESSAGE, 
-                     null, 
-                     new String[]{"Повторить поиск", "Выход"}, // this is the array
-                     "default") == JOptionPane.YES_OPTION){
+                                            "Робот не найден.", 
+                                            "Ошибка", 
+                                            JOptionPane.OK_CANCEL_OPTION, 
+                                            JOptionPane.ERROR_MESSAGE, 
+                                            null, 
+                                            new String[]{"Повторить поиск", "Выход"}, // this is the array
+                                            "default") == JOptionPane.YES_OPTION){
                continue;
             }
             else{
@@ -127,17 +129,50 @@ public class Main extends JFrame{
       if(JOptionPane.showOptionDialog(null, 
                                       "Робот найден на порту " + serialPort.getPortName(), 
                                       "Готов к запуску", 
-                                      JOptionPane.OK_CANCEL_OPTION, 
+                                      JOptionPane.YES_NO_OPTION, 
                                       JOptionPane.INFORMATION_MESSAGE, 
                                       null, 
                                       new String[]{"Начать работу", "Диагностика"}, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
          
-         ICommand command = commands.mapCommands.values().iterator().next();
-         command.run();
+//         ICommand command = commands.mapCommands.values().iterator().next();
+//         command.run();
          
       }
       else{
+         //Диагностика
+         // создаем окно и устанавливаем его размер. 
+         JFrame jf = new JFrame(); 
+         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+         jf.setSize(400, 300); 
+         jf.setLocationRelativeTo(null);
+         jf.setVisible(true); 
+  
+         // создаем  панель. 
+         JPanel p = new JPanel(); 
+         jf.add(p); 
+  
+         // к панели добавляем менеджер FlowLayout. 
+         p.setLayout(new FlowLayout()); 
+  
+         // к панели добавляем кнопки. 
+         for(final String sCommandName : commands.mapCommands.keySet()) {
+            JButton btn = new JButton(sCommandName);
+            
+            btn.addActionListener(new ActionListener(){
+               public void actionPerformed(ActionEvent paramActionEvent){
+                  ICommand command = commands.mapCommands.get(sCommandName);
+                  
+                  try{
+                     command.run();
+                  }
+                  catch (Exception e){
+                     log.error(LOG, e);
+                  }
+               }
+            });
+            p.add(btn); 
+         }
       }
 
       

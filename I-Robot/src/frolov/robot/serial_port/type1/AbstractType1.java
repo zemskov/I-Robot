@@ -30,6 +30,12 @@ public abstract class AbstractType1{
    
    protected void go() throws Exception{
       // Listens for incoming data
+      try{
+         Main.serialPort.removeEventListener();
+      }
+      catch (Exception e){
+      }
+      Main.serialPort.purgePort(255);
       Main.serialPort.addEventListener(new PortReader(this), SerialPort.MASK_RXCHAR);
       
       Main.serialPort.writeBytes(DatatypeConverter.parseHexBinary(xCommand.code));
