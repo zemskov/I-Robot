@@ -25,7 +25,7 @@ public class XCommand{
       }
    }
 
-   public class Value{
+   public static class Value{
       public String name;
       public String type;
       public int length;

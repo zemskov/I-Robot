@@ -89,23 +89,47 @@ public class Main extends JFrame{
       
       
       
-      InterfaceHelper.showWaiting("Ишем Робота...");
-      
-      
-      String sPort = commands.portDetecter.findRobot();
-      
-      InterfaceHelper.hideWaiting();
+      while(true){
+         InterfaceHelper.showWaiting("Ишем Робота...");
 
+         String sPort = commands.portDetecter.findRobot();
+
+         InterfaceHelper.hideWaiting();
+         
+
+         if(sPort == null) {
+            if(JOptionPane.showOptionDialog(null, 
+                     "Робот не найден.", 
+                     "Ошибка", 
+                     JOptionPane.OK_CANCEL_OPTION, 
+                     JOptionPane.ERROR_MESSAGE, 
+                     null, 
+                     new String[]{"Повторить поиск", "Выход"}, // this is the array
+                     "default") == JOptionPane.YES_OPTION){
+               continue;
+            }
+            else{
+               System.exit(0);
+            }
+         }
+         else{
+            break;
+         }
+      };
       
-      JFrame frame = new JFrame();
-      frame.setVisible(true);
-      frame.setLocationRelativeTo(null);
       
-      if(sPort == null) {
-         JOptionPane.showMessageDialog(frame, "Робот не найден.");
-      }
-      else {
-         JOptionPane.showMessageDialog(frame, "Робот найден на порту " + sPort);
-      }
+      
+      
+      
+//      JFrame frame = new JFrame();
+//      frame.setVisible(true);
+//      frame.setLocationRelativeTo(null);
+//      
+//      if(sPort == null) {
+//         JOptionPane.showMessageDialog(frame, "Робот не найден.");
+//      }
+//      else {
+//         JOptionPane.showMessageDialog(frame, "Робот найден на порту " + sPort);
+//      }
    }
 }

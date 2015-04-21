@@ -2,10 +2,12 @@ package frolov.robot.serial_port;
 
 import java.util.*;
 import frolov.robot.*;
+import frolov.robot.serial_port.type1.*;
 
-public class CommandMoveForward implements ICommand{
+public class CommandMoveForward extends AbstractType1 implements ICommand{
    
-   public CommandMoveForward(String sCode){
+   public CommandMoveForward(String sParameters) throws Exception{
+      super(sParameters);
    }
    
 
