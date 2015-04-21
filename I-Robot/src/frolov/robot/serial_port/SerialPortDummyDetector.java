@@ -45,12 +45,18 @@ public class SerialPortDummyDetector implements IPortDetector{
             try{
                pc.serialPort.removeEventListener();
                pc.serialPort.purgePort(255);
-               //pc.serialPort.closePort();
-               
-               pc.interrupt();
+
+               if(serialPort == null || serialPort.getPortName() != pc.portName) {
+                  //Note
+                  //We close all alien ports here
+                  //But keep our robot opened.
+                  pc.serialPort.closePort();
+                  
+                  pc.interrupt();
+               }
             }
             catch (SerialPortException e){
-               e.printStackTrace();
+               log.error(LOG, e);
             }
          }
       }
@@ -122,14 +128,6 @@ public class SerialPortDummyDetector implements IPortDetector{
          }
          catch (Exception e){
             log.error(LOG, e);
-         }
-         finally{
-            try{
-               serialPort.removeEventListener();
-               //serialPort.closePort();
-            }
-            catch (SerialPortException e){
-            }
          }
       }
 
