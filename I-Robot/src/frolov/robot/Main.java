@@ -88,11 +88,12 @@ public class Main extends JFrame{
       Commands commands = ctx.getBean("commands", Commands.class);       
       
       
+      String sPort;
       
       while(true){
          InterfaceHelper.showWaiting("Ишем Робота...");
 
-         String sPort = commands.portDetecter.findRobot();
+         sPort = commands.portDetecter.findRobot();
 
          InterfaceHelper.hideWaiting();
          
@@ -118,6 +119,18 @@ public class Main extends JFrame{
       };
       
       
+      if(JOptionPane.showOptionDialog(null, 
+                                      "Робот найден на порту " + sPort, 
+                                      "Готов к запуску", 
+                                      JOptionPane.OK_CANCEL_OPTION, 
+                                      JOptionPane.INFORMATION_MESSAGE, 
+                                      null, 
+                                      new String[]{"Начать работу", "Диагностика"}, // this is the array
+                                      "default") == JOptionPane.YES_OPTION){
+      }
+      else{
+      }
+
       
       
       
