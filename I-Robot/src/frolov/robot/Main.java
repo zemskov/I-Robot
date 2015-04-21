@@ -89,7 +89,7 @@ public class Main extends JFrame{
 
       ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
 //      ApplicationContext ctx = new AnnotationConfigApplicationContext(Configs.class);      
-      final RoboConfig commands = ctx.getBean("commands", RoboConfig.class);       
+      final RoboConfig commands = ctx.getBean("robo_config", RoboConfig.class);       
       
       
       
@@ -140,39 +140,7 @@ public class Main extends JFrame{
          
       }
       else{
-         //Диагностика
-         // создаем окно и устанавливаем его размер. 
-         JFrame jf = new JFrame(); 
-         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-         jf.setSize(400, 300); 
-         jf.setLocationRelativeTo(null);
-         jf.setVisible(true); 
-  
-         // создаем  панель. 
-         JPanel p = new JPanel(); 
-         jf.add(p); 
-  
-         // к панели добавляем менеджер FlowLayout. 
-         p.setLayout(new FlowLayout()); 
-  
-         // к панели добавляем кнопки. 
-         for(final String sCommandName : commands.mapCommands.keySet()) {
-            JButton btn = new JButton(sCommandName);
-            
-            btn.addActionListener(new ActionListener(){
-               public void actionPerformed(ActionEvent paramActionEvent){
-                  ICommand command = commands.mapCommands.get(sCommandName);
-                  
-                  try{
-                     command.run();
-                  }
-                  catch (Exception e){
-                     log.error(LOG, e);
-                  }
-               }
-            });
-            p.add(btn); 
-         }
+         ctx.getBean("diagnostic_plain");       
       }
 
       

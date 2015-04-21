@@ -51,7 +51,7 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
    <bean id="detecter_dummy" class="frolov.robot.serial_port.SerialPortDummyDetector">
    </bean>
 
-   <bean id="diagnostic_version1" class="frolov.robot.ui.DiagnosticPanelPlain">
+   <bean id="diagnostic_plain" class="frolov.robot.ui.DiagnosticPanelPlain" lazy-init="true">
       <constructor-arg ref="robo_config"/>
    </bean>
    <bean id="diagnostic_joystick" class="frolov.robot.ui.DiagnosticPanelJoystick">

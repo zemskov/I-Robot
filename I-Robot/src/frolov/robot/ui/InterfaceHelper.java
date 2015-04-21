@@ -52,41 +52,48 @@ public final class InterfaceHelper{
    
 
 
-   public static void showWaiting(String sMessage){
-      dlgWaiting = new JDialog();
+   public static void showWaiting(final String sMessage){
+      java.awt.EventQueue.invokeLater(new Runnable(){
+         public void run(){
+            dlgWaiting = new JDialog();
 
-      JPanel panel = new JPanel();
+            JPanel panel = new JPanel();
 
-      // panel.setBackground(new java.awt.Color(230, 230, 255));
+            // panel.setBackground(new java.awt.Color(230, 230, 255));
 
-      JLabel jLabel = new JLabel(sMessage);
-      jLabel.setIcon(iconWating);
-      panel.add(jLabel);
-      dlgWaiting.add(panel);
-      dlgWaiting.setModalExclusionType(JDialog.ModalExclusionType.TOOLKIT_EXCLUDE);
+            JLabel jLabel = new JLabel(sMessage);
+            jLabel.setIcon(iconWating);
+            panel.add(jLabel);
+            dlgWaiting.add(panel);
+            dlgWaiting.setModalExclusionType(JDialog.ModalExclusionType.TOOLKIT_EXCLUDE);
 
-      dlgWaiting.setUndecorated(true);
-      dlgWaiting.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+            dlgWaiting.setUndecorated(true);
+            dlgWaiting.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
 
-      dlgWaiting.setSize(130, 45);
-      dlgWaiting.setAlwaysOnTop(true);
-      dlgWaiting.setLocationRelativeTo(null);
-      dlgWaiting.setResizable(false);
+            dlgWaiting.setSize(130, 45);
+            dlgWaiting.setAlwaysOnTop(true);
+            dlgWaiting.setLocationRelativeTo(null);
+            dlgWaiting.setResizable(false);
 
-      panel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(100, 100, 100)));
-      dlgWaiting.setVisible(true);
+            panel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(100, 100, 100)));
+            dlgWaiting.setVisible(true);
+         }
+      });
    }
    
 
    
    
    public static void hideWaiting(){
-      if(dlgWaiting == null){
-      }
-      else{
-         dlgWaiting.setVisible(false);
-         dlgWaiting = null;
-      }
+      java.awt.EventQueue.invokeLater(new Runnable(){
+         public void run(){
+            if(dlgWaiting == null){
+            }
+            else{
+               dlgWaiting.setVisible(false);
+               dlgWaiting = null;
+            }
+         }
+      });
    }
-
 }
