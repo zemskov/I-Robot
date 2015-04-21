@@ -12,13 +12,13 @@ public class SerialPortDummyDetector implements IPortDetector{
    private static final String LOG = "[Detector] ";
    
    
-   private static String sPortName = null;
+   private static SerialPort serialPort = null;
    
    //We wait for 10 sec
    private static final int MAX_DETECTION_TIME = 10000;
    
 
-   public String findRobot(){
+   public SerialPort findRobot(){
       String[] arrPorts = SerialPortList.getPortNames();
       
       List<PortChecker> listCheckers = new ArrayList<PortChecker>();
@@ -45,7 +45,7 @@ public class SerialPortDummyDetector implements IPortDetector{
             try{
                pc.serialPort.removeEventListener();
                pc.serialPort.purgePort(255);
-               pc.serialPort.closePort();
+               //pc.serialPort.closePort();
                
                pc.interrupt();
             }
@@ -55,21 +55,21 @@ public class SerialPortDummyDetector implements IPortDetector{
          }
       }
       
-      if(sPortName == null){
+      if(serialPort == null){
          log.info(LOG + "Seems no Robot found.");
       }
       else{
-         log.info(LOG + "We did it! Robot is here: " + sPortName);
+         log.info(LOG + "We did it! Robot is here: " + serialPort.getPortName());
       }
       
-      return sPortName;
+      return serialPort;
    }
    
    
    
-   private static void gotIt(String sPortName){
+   private static void gotIt(SerialPort serialPort){
       synchronized(SerialPortDummyDetector.class){
-         SerialPortDummyDetector.sPortName = sPortName;
+         SerialPortDummyDetector.serialPort = serialPort;
          SerialPortDummyDetector.class.notifyAll();
       }
    }
@@ -126,7 +126,7 @@ public class SerialPortDummyDetector implements IPortDetector{
          finally{
             try{
                serialPort.removeEventListener();
-               serialPort.closePort();
+               //serialPort.closePort();
             }
             catch (SerialPortException e){
             }
@@ -152,7 +152,7 @@ public class SerialPortDummyDetector implements IPortDetector{
          public void serialEvent(SerialPortEvent event){
             if(event.isRXCHAR() && event.getEventValue() > 0){
                //log.debug(LOG + portChecker.portName);
-               SerialPortDummyDetector.gotIt(portChecker.portName);
+               SerialPortDummyDetector.gotIt(portChecker.serialPort);
                
                // try{
                // Получаем ответ от устройства, обрабатываем данные и т.д.

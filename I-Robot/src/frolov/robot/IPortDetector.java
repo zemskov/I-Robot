@@ -1,7 +1,9 @@
 package frolov.robot;
 
+import jssc.*;
+
 public interface IPortDetector{
    
-   public String findRobot();
+   public SerialPort findRobot();
 
 }

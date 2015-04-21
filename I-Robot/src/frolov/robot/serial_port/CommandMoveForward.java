@@ -13,6 +13,8 @@ public class CommandMoveForward extends AbstractType1 implements ICommand{
 
    @Override
    public Map<String, Object> run() throws Exception{
+      super.go();
+      
       // TODO Auto-generated method stub
       return null;
    }

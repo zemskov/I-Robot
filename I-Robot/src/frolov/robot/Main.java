@@ -4,9 +4,9 @@ package frolov.robot;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+import jssc.*;
 import org.apache.commons.logging.*;
 import org.springframework.context.*;
-import org.springframework.context.annotation.*;
 import org.springframework.context.support.*;
 import frolov.robot.ui.*;
 
@@ -20,6 +20,8 @@ public class Main extends JFrame{
    
    private static final ImageIcon iconWating;
    private static final JDialog dlgWaiting = new JDialog();
+   
+   public static SerialPort serialPort;
    
    
    static{
@@ -88,17 +90,16 @@ public class Main extends JFrame{
       Commands commands = ctx.getBean("commands", Commands.class);       
       
       
-      String sPort;
       
       while(true){
          InterfaceHelper.showWaiting("Ишем Робота...");
 
-         sPort = commands.portDetecter.findRobot();
+         serialPort = commands.portDetecter.findRobot();
 
          InterfaceHelper.hideWaiting();
          
 
-         if(sPort == null) {
+         if(serialPort == null) {
             if(JOptionPane.showOptionDialog(null, 
                      "Робот не найден.", 
                      "Ошибка", 
@@ -110,6 +111,7 @@ public class Main extends JFrame{
                continue;
             }
             else{
+               //Let's quit then
                System.exit(0);
             }
          }
@@ -119,14 +121,21 @@ public class Main extends JFrame{
       };
       
       
+      
+      
+      
       if(JOptionPane.showOptionDialog(null, 
-                                      "Робот найден на порту " + sPort, 
+                                      "Робот найден на порту " + serialPort.getPortName(), 
                                       "Готов к запуску", 
                                       JOptionPane.OK_CANCEL_OPTION, 
                                       JOptionPane.INFORMATION_MESSAGE, 
                                       null, 
                                       new String[]{"Начать работу", "Диагностика"}, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
+         
+         ICommand command = commands.mapCommands.values().iterator().next();
+         command.run();
+         
       }
       else{
       }
