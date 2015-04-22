@@ -133,26 +133,10 @@ public class Main extends JFrame{
                                       new String[]{"Начать работу", "Диагностика"}, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
          
-//         ICommand command = commands.mapCommands.values().iterator().next();
-//         command.run();
-         
+         ctx.getBean("rest", IRest.class).start();       
       }
       else{
          ctx.getBean("diagnostic");       
       }
-
-      
-      
-      
-//      JFrame frame = new JFrame();
-//      frame.setVisible(true);
-//      frame.setLocationRelativeTo(null);
-//      
-//      if(sPort == null) {
-//         JOptionPane.showMessageDialog(frame, "Робот не найден.");
-//      }
-//      else {
-//         JOptionPane.showMessageDialog(frame, "Робот найден на порту " + sPort);
-//      }
    }
 }

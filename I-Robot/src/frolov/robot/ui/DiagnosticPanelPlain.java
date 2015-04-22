@@ -13,12 +13,9 @@ public class DiagnosticPanelPlain extends JFrame{
    private static final long serialVersionUID = 6788051540896144101L;
    
    
-
-
    
    
-   
-   public DiagnosticPanelPlain(final RoboConfig roboConfig) throws HeadlessException{
+   public DiagnosticPanelPlain(final RoboConfig roboConfig){
       java.awt.EventQueue.invokeLater(new Runnable(){
          public void run(){
             //Диагностика
