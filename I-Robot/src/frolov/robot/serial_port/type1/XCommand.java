@@ -13,7 +13,7 @@ public class XCommand{
 
    public static class XResponse{
       @XmlElement(name = "value")
-      public List<Value> listValues = new ArrayList<Value>();
+      public List<XResponseValue> listValues = new ArrayList<XResponseValue>();
 
 
 
@@ -25,7 +25,7 @@ public class XCommand{
       }
    }
 
-   public static class Value{
+   public static class XResponseValue{
       public String name;
       public String type;
       public int length;
