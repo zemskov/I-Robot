@@ -16,7 +16,7 @@ public abstract class AbstractType1{
    
    
    private final XCommand xCommand;
-   protected final Map<String, Object> mapResponse = new HashMap<String, Object>();
+   protected final Map<String, Object> mapResponse = new LinkedHashMap<String, Object>();
    private ByteBuffer bbuf;
    
    
@@ -50,7 +50,9 @@ public abstract class AbstractType1{
       }
       
       Response response = new Response();
-      response.rawData = bbuf.array();
+      response.rawData = new byte[bbuf.array().length];
+      response.parsedValues = new LinkedHashMap<String, Object>(mapResponse);
+      System.arraycopy(bbuf.array(), 0, response.rawData, 0, bbuf.array().length);
       return response;
    }
    
@@ -95,8 +97,28 @@ public abstract class AbstractType1{
                   StringBuilder sb = new StringBuilder();
                   
                   while(bbuf.hasRemaining()){
-                     int incomingByte = bbuf.get() & 0xff;
-                     sb.append(String.format("%8s", Integer.toBinaryString(incomingByte) + ",").replaceAll(" ", "0"));
+                     int incomingByteFirst = bbuf.get() & 0xff;
+                     sb.append(String.format("%8s", Integer.toBinaryString(incomingByteFirst) + ",").replaceAll(" ", "0"));
+                     
+                     if(incomingByteFirst >> 7 == 1){
+                        //ok, it's the first byte
+                        
+                        int iMeterNumber = (incomingByteFirst & 127) >> 3;
+                        System.out.println("Channel=" + iMeterNumber);
+
+                        int incomingByteSecond = bbuf.get() & 0xff;
+                        
+                        int iValue = ((incomingByteFirst & 1) << 7) | incomingByteSecond;
+                        System.out.println(iValue);
+                        
+                        try{
+                           mapResponse.put(abstractCommand.xCommand.response.listValues.get(iMeterNumber).name, iValue);
+                        }
+                        catch (Throwable e){
+                           //we can reach out of parameter array
+                           //so let's skip such things then
+                        }
+                     }
                   }
                   
                   log.info(LOG + sb);

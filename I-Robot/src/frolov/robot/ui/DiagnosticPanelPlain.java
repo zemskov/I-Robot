@@ -38,10 +38,16 @@ public class DiagnosticPanelPlain extends JFrame{
             p.setLayout(new FlowLayout());
             
             final JTextArea taCommandResponse = new JTextArea();
-//            lbCommandResponse.setSize(400, 50);
             taCommandResponse.setPreferredSize(new Dimension(350, 100));
             taCommandResponse.setLineWrap(true);
             taCommandResponse.setWrapStyleWord(true);
+            
+            
+            final JTextArea taCommandResponsePairs = new JTextArea();
+            taCommandResponsePairs.setPreferredSize(new Dimension(350, 180));
+            taCommandResponsePairs.setLineWrap(true);
+            taCommandResponsePairs.setWrapStyleWord(true);
+            
 
             // к панели добавляем кнопки. 
             for(final String sCommandName : roboConfig.mapCommands.keySet()) {
@@ -50,6 +56,9 @@ public class DiagnosticPanelPlain extends JFrame{
                btn.addActionListener(new ActionListener(){
                   public void actionPerformed(ActionEvent paramActionEvent){
                      ICommand command = roboConfig.mapCommands.get(sCommandName);
+                     
+                     taCommandResponse.setText("");
+                     taCommandResponsePairs.setText("");
                      
                      try{
                         Response response = command.run();
@@ -70,6 +79,10 @@ public class DiagnosticPanelPlain extends JFrame{
                               taCommandResponse.setText("Ответ робота:\n" + sb);
                            }
                         });
+                        
+                        for(String sKey : response.parsedValues.keySet()){
+                           taCommandResponsePairs.setText(taCommandResponsePairs.getText() + sKey + "=" + response.parsedValues.get(sKey) + "\n");
+                        }
                      }
                      catch (Exception e){
                         log.error(LOG, e);
@@ -80,6 +93,7 @@ public class DiagnosticPanelPlain extends JFrame{
             }
             
             p.add(taCommandResponse);
+            p.add(taCommandResponsePairs);
          }
       });
    }
