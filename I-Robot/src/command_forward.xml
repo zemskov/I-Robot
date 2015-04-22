@@ -2,15 +2,39 @@
    <code>E0</code>
    <response>
        <value>
-          <name>Датчик 0</name>
+          <name>Порт 0</name>
           <type>int</type>
-          <length>1</length>
+          <length>2</length>
        </value>
-
        <value>
-          <name>Датчик 1</name>
+          <name>Порт 1</name>
           <type>int</type>
-          <length>1</length>
+          <length>2</length>
+       </value>
+       <value>
+          <name>Порт 2</name>
+          <type>int</type>
+          <length>2</length>
+       </value>
+       <value>
+          <name>Порт 3</name>
+          <type>int</type>
+          <length>2</length>
+       </value>
+       <value>
+          <name>Порт 4</name>
+          <type>int</type>
+          <length>2</length>
+       </value>
+       <value>
+          <name>Порт 5</name>
+          <type>int</type>
+          <length>2</length>
+       </value>
+       <value>
+          <name>Порт 6</name>
+          <type>int</type>
+          <length>2</length>
        </value>
    </response>
 </command>

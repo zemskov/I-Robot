@@ -1,6 +1,7 @@
 package frolov.robot.serial_port.type1;
 
 import java.io.*;
+import java.nio.*;
 import javax.xml.bind.*;
 import jssc.*;
 import org.apache.commons.logging.*;
@@ -45,29 +46,26 @@ public abstract class AbstractType1{
    
    private static class PortReader implements SerialPortEventListener{
       private AbstractType1 abstractCommand;
-
+      private ByteBuffer bbuf;
 
       public PortReader(AbstractType1 abstractCommand){
          this.abstractCommand = abstractCommand;
+         
+         bbuf = ByteBuffer.allocate(100);         
       }
 
 
       public void serialEvent(SerialPortEvent event){
          if(event.isRXCHAR() && event.getEventValue() > 0){
-            //log.debug(LOG + portChecker.portName);
-            //SerialPortDummyDetector.gotIt(portChecker.portName);
             
-            // try{
-            // Получаем ответ от устройства, обрабатываем данные и т.д.
-            // String data = serialPort.readString(event.getEventValue());
-            // System.out.println(portChecker.serialPort.readBytes());
-
-            // И снова отправляем запрос
-            // serialPort.writeString("Get data");
-            // }
-            // catch (SerialPortException ex){
-            // System.out.println(ex);
-            // }
+            
+            try{
+               byte[] arrbyteRead = Main.serialPort.readBytes();
+               System.out.println(arrbyteRead.length);
+               bbuf.put(arrbyteRead);
+            }
+            catch(SerialPortException e){
+            }
          }
       }
    }

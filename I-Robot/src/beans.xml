@@ -54,7 +54,7 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
    <bean id="diagnostic_plain" class="frolov.robot.ui.DiagnosticPanelPlain" lazy-init="true">
       <constructor-arg ref="robo_config"/>
    </bean>
-   <bean id="diagnostic_joystick" class="frolov.robot.ui.DiagnosticPanelJoystick">
+   <bean id="diagnostic_joystick" class="frolov.robot.ui.DiagnosticPanelJoystick" lazy-init="true">
       <constructor-arg ref="robo_config"/>
    </bean>
 
