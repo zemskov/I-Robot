@@ -17,6 +17,8 @@ public abstract class AbstractType1{
    
    private final XCommand xCommand;
    protected final Map<String, Object> mapResponse = new HashMap<String, Object>();
+   private ByteBuffer bbuf;
+   
    
    public AbstractType1(String sFileParameters) throws Exception{
       JAXBContext jc = JAXBContext.newInstance(XCommand.class);
@@ -31,7 +33,7 @@ public abstract class AbstractType1{
 
 
    
-   protected void go() throws Exception{
+   public Response run() throws Exception{
       // Listens for incoming data
       try{
          Main.serialPort.removeEventListener();
@@ -46,13 +48,16 @@ public abstract class AbstractType1{
       synchronized(AbstractType1.this){
          this.wait(1000);
       }
+      
+      Response response = new Response();
+      response.rawData = bbuf.array();
+      return response;
    }
    
    
    
    private class PortReader implements SerialPortEventListener{
       private AbstractType1 abstractCommand;
-      private ByteBuffer bbuf;
 
       public PortReader(AbstractType1 abstractCommand){
          this.abstractCommand = abstractCommand;
@@ -91,7 +96,7 @@ public abstract class AbstractType1{
                   
                   while(bbuf.hasRemaining()){
                      int incomingByte = bbuf.get() & 0xff;
-                     sb.append(Integer.toBinaryString(incomingByte) + ",");
+                     sb.append(String.format("%8s", Integer.toBinaryString(incomingByte) + ",").replaceAll(" ", "0"));
                   }
                   
                   log.info(LOG + sb);
