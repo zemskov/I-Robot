@@ -54,7 +54,7 @@ public class DiagnosticPanelPlain extends JFrame{
                      try{
                         Response response = command.run();
                         
-                        StringBuilder sb = new StringBuilder();
+                        final StringBuilder sb = new StringBuilder();
                         
                         for(int f = 0; f < response.rawData.length; f++){
                            int incomingByte = response.rawData[f] & 0xff;
@@ -65,7 +65,11 @@ public class DiagnosticPanelPlain extends JFrame{
                            sb.append(String.format("%8s", Integer.toBinaryString(incomingByte)).replaceAll(" ", "0"));
                         }
                         
-                        taCommandResponse.setText("Ответ робота:\n" + sb);
+                        java.awt.EventQueue.invokeLater(new Runnable(){
+                           public void run(){
+                              taCommandResponse.setText("Ответ робота:\n" + sb);
+                           }
+                        });
                      }
                      catch (Exception e){
                         log.error(LOG, e);
