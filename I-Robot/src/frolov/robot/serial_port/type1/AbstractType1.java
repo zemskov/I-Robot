@@ -75,7 +75,9 @@ public abstract class AbstractType1{
             
             try{
                byte[] arrbyteRead = Main.serialPort.readBytes();
-               System.out.println(arrbyteRead.length);
+               
+               //System.out.println(arrbyteRead.length);
+               
                bbuf.put(arrbyteRead);
                
                if(bbuf.hasRemaining()){
@@ -85,23 +87,29 @@ public abstract class AbstractType1{
                   
                   bbuf.flip();
                   
-                  for(XCommand.XResponseValue responseValue : abstractCommand.xCommand.response.listValues){
-                     if("int".endsWith(responseValue.type)){
-                        if(responseValue.length == 1) {
-                           byte byte1 = bbuf.get();
-                           
-                           mapResponse.put(responseValue.name, (int) byte1); 
-                        }
-                        else if(responseValue.length == 2) {
-                           byte byte1 = bbuf.get();
-                           byte byte2 = bbuf.get();
-                           
-                           mapResponse.put(responseValue.name, (int) byte1 + byte2 * 256); 
-                        }
-                     }
+                  StringBuilder sb = new StringBuilder();
+                  
+                  while(bbuf.hasRemaining()){
+                     int incomingByte = bbuf.get() & 0xff;
+                     sb.append(Integer.toBinaryString(incomingByte) + ",");
                   }
                   
-                  log.trace(LOG + mapResponse);
+                  log.info(LOG + sb);
+                  
+                  
+//                  for(XCommand.XResponseValue responseValue : abstractCommand.xCommand.response.listValues){
+//                     if("int".endsWith(responseValue.type)){
+//                        if(responseValue.length == 2) {
+//                           int byte1 = bbuf.get() & 0xff;
+//                           int byte2 = bbuf.get() & 0xff;
+//                           
+//                           mapResponse.put(responseValue.name, (int) byte1 + byte2 * 256); 
+//                        }
+//                     }
+//                  }
+                  
+                  //log.trace(LOG + mapResponse);
+                  //log.trace(LOG + bbuf.array());
                   
                   synchronized(AbstractType1.this){
                      AbstractType1.this.notifyAll();

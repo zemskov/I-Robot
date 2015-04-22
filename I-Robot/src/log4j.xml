@@ -42,7 +42,7 @@
 
 
    <root>
-      <priority value="TRACE"/>
+      <priority value="INFO"/>
 <!--
       <appender-ref ref="SYSTEM" />
 -->
