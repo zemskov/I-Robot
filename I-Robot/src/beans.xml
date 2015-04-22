@@ -16,7 +16,7 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
 
    <bean id="robo_config" class="frolov.robot.RoboConfig" scope="singleton">
-      <constructor-arg ref="detecter_dummy"/>
+      <constructor-arg ref="port_detector"/>
       <constructor-arg>
          <map>
             <entry key="Стоп!">
@@ -48,13 +48,20 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
       </constructor-arg>
    </bean>
 
-   <bean id="detecter_dummy" class="frolov.robot.serial_port.SerialPortDummyDetector">
+   <bean id="port_detector" class="frolov.robot.serial_port.SerialPortDummyDetector">
    </bean>
 
-   <bean id="diagnostic_plain" class="frolov.robot.ui.DiagnosticPanelPlain" lazy-init="true">
+   <bean id="diagnostic" class="frolov.robot.ui.DiagnosticPanelPlain" lazy-init="true">
       <constructor-arg ref="robo_config"/>
    </bean>
+
+<!--
    <bean id="diagnostic_joystick" class="frolov.robot.ui.DiagnosticPanelJoystick" lazy-init="true">
+      <constructor-arg ref="robo_config"/>
+   </bean>
+-->
+
+   <bean id="rest" class="frolov.robot." lazy-init="true">
       <constructor-arg ref="robo_config"/>
    </bean>
 

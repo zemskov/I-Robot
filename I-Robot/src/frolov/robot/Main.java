@@ -92,7 +92,7 @@ public class Main extends JFrame{
       
       
       while(true){
-         InterfaceHelper.showWaiting("Ишем Робота...");
+         InterfaceHelper.showWaiting("Ищем Робота...");
 
          serialPort = commands.portDetecter.findRobot();
 
@@ -138,7 +138,7 @@ public class Main extends JFrame{
          
       }
       else{
-         ctx.getBean("diagnostic_plain");       
+         ctx.getBean("diagnostic");       
       }
 
       

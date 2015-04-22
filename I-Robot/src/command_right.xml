@@ -2,37 +2,37 @@
    <code>C0</code>
    <response>
        <value>
-          <name>Порт 0</name>
+          <name>Датчик 0</name>
           <type>int</type>
           <length>2</length>
        </value>
        <value>
-          <name>Порт 1</name>
+          <name>Датчик 1</name>
           <type>int</type>
           <length>2</length>
        </value>
        <value>
-          <name>Порт 2</name>
+          <name>Датчик 2</name>
           <type>int</type>
           <length>2</length>
        </value>
        <value>
-          <name>Порт 3</name>
+          <name>Датчик 3</name>
           <type>int</type>
           <length>2</length>
        </value>
        <value>
-          <name>Порт 4</name>
+          <name>Датчик 4</name>
           <type>int</type>
           <length>2</length>
        </value>
        <value>
-          <name>Порт 5</name>
+          <name>Датчик 5</name>
           <type>int</type>
           <length>2</length>
        </value>
        <value>
-          <name>Порт 6</name>
+          <name>Датчик 6</name>
           <type>int</type>
           <length>2</length>
        </value>
