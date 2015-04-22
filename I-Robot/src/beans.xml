@@ -61,7 +61,7 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
    </bean>
 -->
 
-   <bean id="rest" class="frolov.robot.rest.ScratchRest" lazy-init="true">
+   <bean id="rest" class="frolov.robot.rest.scratch.ScratchRest" lazy-init="true">
       <constructor-arg ref="robo_config"/>
    </bean>
 

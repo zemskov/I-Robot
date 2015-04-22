@@ -24,7 +24,7 @@ public class ScratchRest implements IRest{
       // Tells the Jersey Servlet which REST service/class to load.
       jerseyServlet.setInitParameter(
          "com.sun.jersey.config.property.packages",
-         "frolov.robot.rest");
+         "frolov.robot.rest.scratch");
 
       try{
          jettyServer.start();
