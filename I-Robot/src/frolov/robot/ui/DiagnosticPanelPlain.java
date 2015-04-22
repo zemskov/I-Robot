@@ -25,8 +25,9 @@ public class DiagnosticPanelPlain extends JFrame{
             // создаем окно и устанавливаем его размер. 
             JFrame jf = new JFrame(); 
             jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-            jf.setSize(400, 300); 
+            jf.setSize(400, 400); 
             jf.setLocationRelativeTo(null);
+            jf.setResizable(false);
             jf.setVisible(true); 
 
             // создаем  панель. 
@@ -34,7 +35,13 @@ public class DiagnosticPanelPlain extends JFrame{
             jf.add(p); 
 
             // к панели добавляем менеджер FlowLayout. 
-            p.setLayout(new FlowLayout()); 
+            p.setLayout(new FlowLayout());
+            
+            final JTextArea taCommandResponse = new JTextArea();
+//            lbCommandResponse.setSize(400, 50);
+            taCommandResponse.setPreferredSize(new Dimension(350, 100));
+            taCommandResponse.setLineWrap(true);
+            taCommandResponse.setWrapStyleWord(true);
 
             // к панели добавляем кнопки. 
             for(final String sCommandName : roboConfig.mapCommands.keySet()) {
@@ -45,7 +52,20 @@ public class DiagnosticPanelPlain extends JFrame{
                      ICommand command = roboConfig.mapCommands.get(sCommandName);
                      
                      try{
-                        command.run();
+                        Response response = command.run();
+                        
+                        StringBuilder sb = new StringBuilder();
+                        
+                        for(int f = 0; f < response.rawData.length; f++){
+                           int incomingByte = response.rawData[f] & 0xff;
+                           
+                           if(sb.length() > 0){
+                              sb.append(", ");                              
+                           }
+                           sb.append(String.format("%8s", Integer.toBinaryString(incomingByte)).replaceAll(" ", "0"));
+                        }
+                        
+                        taCommandResponse.setText("Ответ робота:\n" + sb);
                      }
                      catch (Exception e){
                         log.error(LOG, e);
@@ -54,6 +74,8 @@ public class DiagnosticPanelPlain extends JFrame{
                });
                p.add(btn); 
             }
+            
+            p.add(taCommandResponse);
          }
       });
    }
