@@ -6,7 +6,10 @@ import frolov.robot.*;
 
 public class ScratchRest implements IRest{
    
+   private final RoboConfig roboConfig;
+   
    public ScratchRest(final RoboConfig roboConfig){
+      this.roboConfig = roboConfig;
    }
    
    
@@ -14,6 +17,7 @@ public class ScratchRest implements IRest{
    public void start() throws Exception{
       ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
       context.setContextPath("/");
+      context.setAttribute("roboConfig", roboConfig);
 
       Server jettyServer = new Server(8080);
       jettyServer.setHandler(context);
