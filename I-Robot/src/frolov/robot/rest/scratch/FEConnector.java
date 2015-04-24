@@ -56,6 +56,31 @@ public class FEConnector{
    }
    
    
+   @GET
+   @Path("/left")
+   @Produces(MediaType.TEXT_PLAIN)
+   public String left() throws Exception{
+      
+      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Поворот налево").run();
+      
+      return "Test";
+   }
+   
+   
+   
+   @GET
+   @Path("/right")
+   @Produces(MediaType.TEXT_PLAIN)
+   public String right() throws Exception{
+      
+      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Поворот направо").run();
+      
+      return "Test";
+   }
+   
+   
+   
+   
    
    
    @GET
