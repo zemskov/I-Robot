@@ -20,6 +20,11 @@ public class SerialPortDummyDetector implements IPortDetector{
 
    public SerialPort findRobot(){
       String[] arrPorts = SerialPortList.getPortNames();
+      if(arrPorts.length == 0){
+         //no ports at all
+         return null;
+      }
+
       
       List<PortChecker> listCheckers = new ArrayList<PortChecker>();
 
@@ -43,8 +48,8 @@ public class SerialPortDummyDetector implements IPortDetector{
          
          for(PortChecker pc : listCheckers){
             try{
-               pc.serialPort.removeEventListener();
                pc.serialPort.purgePort(255);
+               pc.serialPort.removeEventListener();
 
                if(serialPort == null || serialPort.getPortName() != pc.portName) {
                   //Note
@@ -105,21 +110,23 @@ public class SerialPortDummyDetector implements IPortDetector{
             // Let's open
             serialPort.openPort();
             log.debug(LOG + portName + " opened.");
+            
+            // Listens for incoming data
+            serialPort.addEventListener(new PortReader(this), SerialPort.MASK_RXCHAR);
 
             // Something standart
-            serialPort.setParams(SerialPort.BAUDRATE_9600,
+            serialPort.setParams(SerialPort.BAUDRATE_38400,
                                  SerialPort.DATABITS_8,
                                  SerialPort.STOPBITS_1,
                                  SerialPort.PARITY_NONE);
 
             // Hardware Overflow
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
+            serialPort.purgePort(255);
 
-            // Listens for incoming data
-            serialPort.addEventListener(new PortReader(this), SerialPort.MASK_RXCHAR);
 
             // Send some data
-            serialPort.writeByte((byte) 32);
+            serialPort.writeByte((byte) 0);
             log.debug(LOG + portName + " Test data sent.");
             
             Thread.sleep(MAX_DETECTION_TIME);

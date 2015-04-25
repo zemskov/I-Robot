@@ -53,7 +53,7 @@ public final class InterfaceHelper{
 
 
    public static void showWaiting(final String sMessage){
-      java.awt.EventQueue.invokeLater(new Runnable(){
+      SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             dlgWaiting = new JDialog();
 
@@ -85,7 +85,7 @@ public final class InterfaceHelper{
    
    
    public static void hideWaiting(){
-      java.awt.EventQueue.invokeLater(new Runnable(){
+      SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             if(dlgWaiting == null){
             }

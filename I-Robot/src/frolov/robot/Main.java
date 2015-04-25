@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import javax.swing.*;
 import jssc.*;
 import org.apache.commons.logging.*;
@@ -93,6 +94,8 @@ public class Main extends JFrame{
       
       
       
+      
+      
       while(true){
          InterfaceHelper.showWaiting("Ищем Робота...");
 
@@ -125,20 +128,35 @@ public class Main extends JFrame{
       
       
       
+      final AtomicBoolean bStartDiagnostic = new AtomicBoolean();      
       
-      if(JOptionPane.showOptionDialog(null, 
-                                      "Робот найден на порту " + serialPort.getPortName(), 
-                                      "Готов к запуску", 
-                                      JOptionPane.YES_NO_OPTION, 
-                                      JOptionPane.INFORMATION_MESSAGE, 
-                                      null, 
-                                      new String[]{"Начать работу", "Диагностика"}, // this is the array
-                                      "default") == JOptionPane.YES_OPTION){
-         
-         
+      SwingUtilities.invokeAndWait(new Runnable(){
+         public void run(){
+            if(JOptionPane.showOptionDialog(null, 
+                     "Робот найден на порту " + serialPort.getPortName(), 
+                     "Готов к запуску", 
+                     JOptionPane.YES_NO_OPTION, 
+                     JOptionPane.INFORMATION_MESSAGE, 
+                     null, 
+                     new String[]{"Начать работу", "Диагностика"}, // this is the array
+                     "default") == JOptionPane.YES_OPTION){
+               bStartDiagnostic.set(false);
+            }
+            else{
+               bStartDiagnostic.set(true);
+            }
+         }
+      });
+      
+      
+      
+      if(bStartDiagnostic.get()){
+         ctx.getBean("diagnostic");       
+      }
+      else{
          final TrayIcon trayIcon;
          
-         if (SystemTray.isSupported()) {
+         if(SystemTray.isSupported()) {
           
              SystemTray tray = SystemTray.getSystemTray();
              Image image = Toolkit.getDefaultToolkit().getImage(JFrame.class.getResource("/loaderB32.gif"));
@@ -208,9 +226,6 @@ public class Main extends JFrame{
          
          
          ctx.getBean("rest", IRest.class).start();       
-      }
-      else{
-         ctx.getBean("diagnostic");       
       }
    }
 }

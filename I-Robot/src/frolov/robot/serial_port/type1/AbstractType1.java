@@ -40,7 +40,13 @@ public abstract class AbstractType1{
       }
       catch (Exception e){
       }
+      
+      
+      
+      //Let's clean incoming buffer
       Main.serialPort.purgePort(255);
+      Main.serialPort.readBytes(Main.serialPort.getInputBufferBytesCount());
+      
       Main.serialPort.addEventListener(new PortReader(this), SerialPort.MASK_RXCHAR);
       
       Main.serialPort.writeBytes(DatatypeConverter.parseHexBinary(xCommand.code));
