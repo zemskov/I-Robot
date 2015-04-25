@@ -20,7 +20,12 @@ public class Command implements ICommand{
    private ByteBuffer bbuf;
    
    
-   public Command(String sFileParameters) throws Exception{
+   private final String sName;
+   
+   
+   public Command(String sName, String sIcon, String sFileParameters) throws Exception{
+      this.sName = sName;
+      
       JAXBContext jc = JAXBContext.newInstance(XCommand.class);
       Unmarshaller unmarshaller = jc.createUnmarshaller();
 
@@ -153,6 +158,12 @@ public class Command implements ICommand{
             }
          }
       }
+   }
+
+
+
+   public String getName(){
+      return sName;
    }
    
 }

@@ -1,5 +1,6 @@
 package frolov.robot.rest.scratch;
 
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.ws.rs.*;
@@ -22,73 +23,39 @@ public class FEConnector{
       
    }
    
-   
-   @GET
-   @Path("/crossdomain.xml")
-   @Produces(MediaType.APPLICATION_XML)
-   public String crossdomain() throws Exception{
-      return "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" /></cross-domain-policy>";
-   }
-   
-   
-   
 
    @GET
-   @Path("/forward")
+   @Path("/{paths:.+}")
    @Produces(MediaType.TEXT_PLAIN)
-   public String forward() throws Exception{
+   public String serice(@PathParam("paths")  List<PathSegment> uglyPath) throws Exception{
       
-      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Ехать вперед").run();
+      List<String> listParameters = new ArrayList<String>();
+
+      for(PathSegment pathSegment : uglyPath){
+         listParameters.add(pathSegment.getPath());
+      }
       
-      return "Test";
+      String sCommand = listParameters.remove(0);
+      
+      if("crossdomain.xml".equals(sCommand)){
+         return "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" /></cross-domain-policy>";
+      }
+      else{
+         ICommand command = ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get(sCommand);
+         
+         if(command == null){
+            throw new WebApplicationException(javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE);
+         }
+         else{
+            frolov.robot.Response reponse = command.run();
+            
+            StringBuilder sb = new StringBuilder();
+            for(String sKey : reponse.parsedValues.keySet()){
+               sb.append(sKey + "=" + reponse.parsedValues.get(sKey) + "\n");
+            }
+            
+            return sb.toString();
+         }
+      }
    }
-   
-   
-   
-   @GET
-   @Path("/backward")
-   @Produces(MediaType.TEXT_PLAIN)
-   public String backward() throws Exception{
-      
-      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Ехать назад").run();
-      
-      return "Test";
-   }
-   
-   
-   @GET
-   @Path("/left")
-   @Produces(MediaType.TEXT_PLAIN)
-   public String left() throws Exception{
-      
-      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Поворот налево").run();
-      
-      return "Test";
-   }
-   
-   
-   
-   @GET
-   @Path("/right")
-   @Produces(MediaType.TEXT_PLAIN)
-   public String right() throws Exception{
-      
-      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Поворот направо").run();
-      
-      return "Test";
-   }
-   
-   
-   
-   
-   
-   
-   @GET
-   @Path("/stop")
-   @Produces(MediaType.TEXT_PLAIN)
-   public String stop() throws Exception{
-      ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get("Стоп!").run();
-      return "Test";
-   }
-   
 }
