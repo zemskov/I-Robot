@@ -13,15 +13,15 @@ http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
    <context:annotation-config/>
-    
 
-   <bean id="emergency_stop" class="frolov.robot.serial_port.type1.Command">
+
+   <bean id="tray_command" class="frolov.robot.serial_port.type1.Command">
       <constructor-arg value="Комманда на иконке" />
-      <constructor-arg value="" />
+      <constructor-arg value="stop.png" />
       <constructor-arg value="command_stop.xml" />
    </bean>
 
-    
+
 
 
    <bean id="robo_config" class="frolov.robot.RoboConfig" scope="singleton">
@@ -31,35 +31,35 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
             <entry key="stop">
                <bean id="command_stop" class="frolov.robot.serial_port.type1.Command">
                   <constructor-arg value="Стоп!" />
-                  <constructor-arg value="" />
+                  <constructor-arg value="stop.png" />
                   <constructor-arg value="command_stop.xml" />
                </bean>
             </entry>
             <entry key="forward">
                <bean id="command_move_forward" class="frolov.robot.serial_port.type1.Command">
                   <constructor-arg value="Ехать вперед" />
-                  <constructor-arg value="" />
+                  <constructor-arg value="up.png" />
                   <constructor-arg value="command_forward.xml" />
                </bean>
             </entry>
             <entry key="backward">
                <bean id="command_move_backward" class="frolov.robot.serial_port.type1.Command">
                   <constructor-arg value="Ехать назад" />
-                  <constructor-arg value="" />
+                  <constructor-arg value="down.png" />
                   <constructor-arg value="command_backward.xml" />
                </bean>
             </entry>
             <entry key="left">
                <bean id="left_turn" class="frolov.robot.serial_port.type1.Command">
                   <constructor-arg value="Поворот налево" />
-                  <constructor-arg value="" />
+                  <constructor-arg value="left.png" />
                   <constructor-arg value="command_left.xml" />
                </bean>
             </entry>
             <entry key="right">
                <bean id="right_turn" class="frolov.robot.serial_port.type1.Command">
                   <constructor-arg value="Поворот направо" />
-                  <constructor-arg value="" />
+                  <constructor-arg value="right.png" />
                   <constructor-arg value="command_right.xml" />
                </bean>
             </entry>

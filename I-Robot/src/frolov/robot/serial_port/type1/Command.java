@@ -21,10 +21,12 @@ public class Command implements ICommand{
    
    
    private final String sName;
+   private final String sIconName;
    
    
    public Command(String sName, String sIcon, String sFileParameters) throws Exception{
       this.sName = sName;
+      this.sIconName = sIcon;
       
       JAXBContext jc = JAXBContext.newInstance(XCommand.class);
       Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -152,6 +154,8 @@ public class Command implements ICommand{
                   synchronized(Command.this){
                      Command.this.notifyAll();
                   }
+                  
+                  Main.setIconImage(sIconName);
                }
             }
             catch(SerialPortException e){

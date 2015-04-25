@@ -27,6 +27,20 @@ public class Main extends JFrame{
    public static SerialPort serialPort;
    
    
+   
+   public static final TrayIcon trayIcon;
+   public static final PopupMenu popup; 
+   
+   static{
+      popup = new PopupMenu();
+      Image image = Toolkit.getDefaultToolkit().getImage(JFrame.class.getResource("/loaderB32.gif"));
+      
+   
+      trayIcon = new TrayIcon(image, "Tray Demo", popup);
+   }
+
+   
+   
    static{
       iconWating = new ImageIcon(JFrame.class.getResource("/loaderB32.gif"));
       
@@ -88,9 +102,9 @@ public class Main extends JFrame{
       
       
 
-      ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
+      final ApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
 //      ApplicationContext ctx = new AnnotationConfigApplicationContext(Configs.class);      
-      final RoboConfig commands = ctx.getBean("robo_config", RoboConfig.class);       
+      final RoboConfig roboConfig = ctx.getBean("robo_config", RoboConfig.class);       
       
       
       
@@ -98,7 +112,7 @@ public class Main extends JFrame{
       while(true){
          InterfaceHelper.showWaiting("Ищем Робота...");
 
-         serialPort = commands.portDetecter.findRobot();
+         serialPort = roboConfig.portDetecter.findRobot();
 
          InterfaceHelper.hideWaiting();
          
@@ -158,78 +172,91 @@ public class Main extends JFrame{
          ctx.getBean("diagnostic");       
       }
       else{
-         final TrayIcon trayIcon;
-         
-         if(SystemTray.isSupported()) {
-          
-             SystemTray tray = SystemTray.getSystemTray();
-             Image image = Toolkit.getDefaultToolkit().getImage(JFrame.class.getResource("/loaderB32.gif"));
-          
-             MouseListener mouseListener = new MouseListener() {
-                          
-                 public void mouseClicked(MouseEvent e) {
-                     System.out.println("Tray Icon - Mouse clicked!");                
-                 }
-          
-                 public void mouseEntered(MouseEvent e) {
-                     System.out.println("Tray Icon - Mouse entered!");                
-                 }
-          
-                 public void mouseExited(MouseEvent e) {
-                     System.out.println("Tray Icon - Mouse exited!");                
-                 }
-          
-                 public void mousePressed(MouseEvent e) {
-                     System.out.println("Tray Icon - Mouse pressed!");                
-                 }
-          
-                 public void mouseReleased(MouseEvent e) {
-                     System.out.println("Tray Icon - Mouse released!");                
-                 }
-             };
-          
-             ActionListener exitListener = new ActionListener() {
-                 public void actionPerformed(ActionEvent e) {
-                     System.out.println("Exiting...");
-                     System.exit(0);
-                 }
-             };
-                      
-             PopupMenu popup = new PopupMenu();
-             MenuItem defaultItem = new MenuItem("Exit");
-             defaultItem.addActionListener(exitListener);
-             popup.add(defaultItem);
-          
-             trayIcon = new TrayIcon(image, "Tray Demo", popup);
-          
-             ActionListener actionListener = new ActionListener() {
-                 public void actionPerformed(ActionEvent e) {
-                     trayIcon.displayMessage("Action Event",
-                         "An Action Event Has Been Performed!",
-                         TrayIcon.MessageType.INFO);
-                 }
-             };
-                      
-             trayIcon.setImageAutoSize(true);
-             trayIcon.addActionListener(actionListener);
-             trayIcon.addMouseListener(mouseListener);
-          
-             try {
-                 tray.add(trayIcon);
-             } catch (AWTException e) {
-                 System.err.println("TrayIcon could not be added.");
-             }
-          
-         } else {
-          
-             //  System Tray is not supported
-          
-         }      
-         
-         
+         if(SystemTray.isSupported()){
+
+            SystemTray tray = SystemTray.getSystemTray();
+ 
+            MouseListener mouseListener = new MouseListener(){
+
+               public void mouseClicked(MouseEvent event){
+                  // System.out.println("Tray Icon - Mouse clicked!");
+               }
+
+               public void mouseEntered(MouseEvent event){
+                  // System.out.println("Tray Icon - Mouse entered!");
+               }
+
+               public void mouseExited(MouseEvent event){
+                  // System.out.println("Tray Icon - Mouse exited!");
+               }
+
+               public void mousePressed(MouseEvent event){
+                  // System.out.println("Tray Icon - Mouse pressed!");
+
+                  try{
+                     ctx.getBean("tray_command", ICommand.class).run();
+                  }
+                  catch (Exception e){
+                     log.error(LOG, e);
+                  }
+               }
+
+               public void mouseReleased(MouseEvent e){
+                  // System.out.println("Tray Icon - Mouse released!");
+               }
+            };
+
+            ActionListener exitListener = new ActionListener(){
+               public void actionPerformed(ActionEvent e){
+                  System.out.println("Exiting...");
+                  System.exit(0);
+               }
+            };
+
+
+            ActionListener actionListener = new ActionListener(){
+               public void actionPerformed(ActionEvent e){
+                  //trayIcon.displayMessage("Action Event", "An Action Event Has Been Performed!", TrayIcon.MessageType.INFO);
+               }
+            };
+            
+            MenuItem defaultItem = new MenuItem("Exit");
+            defaultItem.addActionListener(exitListener);
+            popup.add(defaultItem);
+            
+
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addActionListener(actionListener);
+            trayIcon.addMouseListener(mouseListener);
+
+            try{
+               tray.add(trayIcon);
+            }
+            catch (AWTException e){
+               System.err.println("TrayIcon could not be added.");
+            }
+
+         }
+         else{
+            // System Tray is not supported
+         }        
          
          
          ctx.getBean("rest", IRest.class).start();       
+      }
+   }
+   
+
+
+
+
+
+   public static void setIconImage(String sIconName){
+      if(sIconName == null){
+      }
+      else{
+         Image imageIcon = Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/" + sIconName));
+         Main.trayIcon.setImage(imageIcon);
       }
    }
 }

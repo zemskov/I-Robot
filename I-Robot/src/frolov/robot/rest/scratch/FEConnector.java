@@ -26,7 +26,7 @@ public class FEConnector{
 
    @GET
    @Path("/{paths:.+}")
-   @Produces(MediaType.TEXT_PLAIN)
+   @Produces("text/plain; charset=UTF-8")
    public String serice(@PathParam("paths")  List<PathSegment> uglyPath) throws Exception{
       
       List<String> listParameters = new ArrayList<String>();
