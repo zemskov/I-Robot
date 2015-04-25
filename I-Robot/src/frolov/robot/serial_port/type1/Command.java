@@ -10,7 +10,7 @@ import frolov.robot.*;
 
 
 
-public abstract class AbstractType1{
+public class Command implements ICommand{
    private static Log log = LogFactory.getLog(Main.class);
    private static final String LOG = "[Main] ";
    
@@ -20,7 +20,7 @@ public abstract class AbstractType1{
    private ByteBuffer bbuf;
    
    
-   public AbstractType1(String sFileParameters) throws Exception{
+   public Command(String sFileParameters) throws Exception{
       JAXBContext jc = JAXBContext.newInstance(XCommand.class);
       Unmarshaller unmarshaller = jc.createUnmarshaller();
 
@@ -51,7 +51,7 @@ public abstract class AbstractType1{
       
       Main.serialPort.writeBytes(DatatypeConverter.parseHexBinary(xCommand.code));
       
-      synchronized(AbstractType1.this){
+      synchronized(Command.this){
          this.wait(1000);
       }
       
@@ -65,9 +65,9 @@ public abstract class AbstractType1{
    
    
    private class PortReader implements SerialPortEventListener{
-      private AbstractType1 abstractCommand;
+      private Command abstractCommand;
 
-      public PortReader(AbstractType1 abstractCommand){
+      public PortReader(Command abstractCommand){
          this.abstractCommand = abstractCommand;
 
          //ok, let's find out how much space we need
@@ -144,8 +144,8 @@ public abstract class AbstractType1{
                   //log.trace(LOG + mapResponse);
                   //log.trace(LOG + bbuf.array());
                   
-                  synchronized(AbstractType1.this){
-                     AbstractType1.this.notifyAll();
+                  synchronized(Command.this){
+                     Command.this.notifyAll();
                   }
                }
             }

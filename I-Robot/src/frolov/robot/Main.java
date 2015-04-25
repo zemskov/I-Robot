@@ -95,7 +95,6 @@ public class Main extends JFrame{
       
       
       
-      
       while(true){
          InterfaceHelper.showWaiting("Ищем Робота...");
 
@@ -105,20 +104,25 @@ public class Main extends JFrame{
          
 
          if(serialPort == null) {
-            if(JOptionPane.showOptionDialog(null, 
-                                            "Робот не найден.", 
-                                            "Ошибка", 
-                                            JOptionPane.OK_CANCEL_OPTION, 
-                                            JOptionPane.ERROR_MESSAGE, 
-                                            null, 
-                                            new String[]{"Повторить поиск", "Выход"}, // this is the array
-                                            "default") == JOptionPane.YES_OPTION){
-               continue;
-            }
-            else{
-               //Let's quit then
-               System.exit(0);
-            }
+            SwingUtilities.invokeAndWait(new Runnable(){
+               public void run(){
+                  if(JOptionPane.showOptionDialog(null, 
+                                                  "Робот не найден.", 
+                                                  "Ошибка", 
+                                                  JOptionPane.OK_CANCEL_OPTION, 
+                                                  JOptionPane.ERROR_MESSAGE, 
+                                                  null, 
+                                                  new String[]{"Повторить поиск", "Выход"}, // this is the array
+                                                  "default") == JOptionPane.YES_OPTION){
+                  }
+                  else{
+                     //Let's quit then
+                     System.exit(0);
+                  }
+               }
+            });
+            
+            continue;
          }
          else{
             break;
