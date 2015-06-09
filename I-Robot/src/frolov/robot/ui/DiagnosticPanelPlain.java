@@ -16,16 +16,12 @@ public class DiagnosticPanelPlain extends JFrame{
    
    
    public DiagnosticPanelPlain(final RoboConfig roboConfig){
-      java.awt.EventQueue.invokeLater(new Runnable(){
+      SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             //Диагностика
             // создаем окно и устанавливаем его размер. 
             JFrame jf = new JFrame(); 
             jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-            jf.setSize(400, 400); 
-            jf.setLocationRelativeTo(null);
-            jf.setResizable(false);
-            jf.setVisible(true); 
 
             // создаем  панель. 
             JPanel p = new JPanel(); 
@@ -91,6 +87,11 @@ public class DiagnosticPanelPlain extends JFrame{
             
             p.add(taCommandResponse);
             p.add(taCommandResponsePairs);
+
+            jf.setSize(400, 400); 
+            jf.setLocationRelativeTo(null);
+            jf.setResizable(true);
+            jf.setVisible(true); 
          }
       });
    }

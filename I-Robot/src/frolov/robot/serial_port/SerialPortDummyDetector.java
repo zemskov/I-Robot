@@ -115,7 +115,7 @@ public class SerialPortDummyDetector implements IPortDetector{
             serialPort.addEventListener(new PortReader(this), SerialPort.MASK_RXCHAR);
 
             // Something standart
-            serialPort.setParams(SerialPort.BAUDRATE_38400,
+            serialPort.setParams(SerialPort.BAUDRATE_9600,
                                  SerialPort.DATABITS_8,
                                  SerialPort.STOPBITS_1,
                                  SerialPort.PARITY_NONE);
@@ -123,7 +123,13 @@ public class SerialPortDummyDetector implements IPortDetector{
             // Hardware Overflow
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
             serialPort.purgePort(255);
-
+            
+            try{
+               Thread.sleep(2000);
+            }
+            catch (InterruptedException e){
+               return;
+            }
 
             // Send some data
             serialPort.writeByte((byte) 0);

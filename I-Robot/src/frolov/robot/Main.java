@@ -36,7 +36,7 @@ public class Main extends JFrame{
       Image image = Toolkit.getDefaultToolkit().getImage(JFrame.class.getResource("/loaderB32.gif"));
       
    
-      trayIcon = new TrayIcon(image, "Tray Demo", popup);
+      trayIcon = new TrayIcon(image, "Скратчдуино v2.0", popup);
    }
 
    
@@ -49,7 +49,7 @@ public class Main extends JFrame{
       
       //panel.setBackground(new java.awt.Color(230, 230, 255));
       
-      JLabel jLabel = new JLabel(" Please wait...");
+      JLabel jLabel = new JLabel(" Ожидайте...");
       jLabel.setIcon(iconWating);
       panel.add(jLabel);
       dlgWaiting.add(panel);

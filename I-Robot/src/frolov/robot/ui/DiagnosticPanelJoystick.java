@@ -1,7 +1,6 @@
 package frolov.robot.ui;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import org.apache.commons.logging.*;
 import frolov.robot.*;
