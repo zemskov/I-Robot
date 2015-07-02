@@ -27,7 +27,10 @@ public class FEConnector{
    @GET
    @Path("/{paths:.+}")
    @Produces("text/plain; charset=UTF-8")
-   public String serice(@PathParam("paths")  List<PathSegment> uglyPath) throws Exception{
+   public String serice(@PathParam("paths")  List<PathSegment> uglyPath, @Context HttpServletResponse response) throws Exception{
+      response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      response.setHeader("Pragma", "no-cache");
+      response.setHeader("Expires", "0");
       
       List<String> listParameters = new ArrayList<String>();
 
@@ -38,23 +41,31 @@ public class FEConnector{
       String sCommand = listParameters.remove(0);
       
       if("crossdomain.xml".equals(sCommand)){
-         return "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" /></cross-domain-policy>";
+         return "<?xml version=\"1.0\"?><cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" /></cross-domain-policy>";
       }
       else{
-         ICommand command = ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get(sCommand);
-         
-         if(command == null){
-            throw new WebApplicationException(javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE);
-         }
-         else{
-            frolov.robot.Response reponse = command.run();
+         try{
+            ICommand command = ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get(sCommand);
             
-            StringBuilder sb = new StringBuilder();
-            for(String sKey : reponse.parsedValues.keySet()){
-               sb.append(sKey + "=" + reponse.parsedValues.get(sKey) + "\n");
+            if(command == null){
+               throw new WebApplicationException(javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE);
             }
-            
-            return sb.toString();
+            else{
+               frolov.robot.Response reponse = command.run();
+               
+               StringBuilder sb = new StringBuilder();
+               ArrayList<String> arliKeys = new ArrayList<String>(reponse.parsedValues.keySet());
+               Collections.sort(arliKeys);            
+               
+               for(String sKey : arliKeys){
+                  sb.append(sKey + "=" + reponse.parsedValues.get(sKey) + "\n");
+               }
+               
+               return sb.toString();
+            }
+         }
+         catch (Exception e){
+            return "error=0";
          }
       }
    }

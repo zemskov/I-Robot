@@ -67,7 +67,7 @@ public class Main extends JFrame{
    }
    
    
-   
+   private static ServerSocket socket = null;
    
 
    public Main(){
@@ -84,14 +84,6 @@ public class Main extends JFrame{
    public static void main(String args[]) throws Exception{
       log.info(LOG + "ok, let's start");
       
-      //Only one instance
-      try{
-         new ServerSocket(12345, 1, null);
-      }
-      catch (Exception e){
-         //Let's show puke 
-         System.exit(0);
-      }
       
       // We need ".", not "," in numbers
       Locale.setDefault(Locale.US);
@@ -99,6 +91,19 @@ public class Main extends JFrame{
       InterfaceHelper.setLookAndFeel();
 
       
+      
+      
+      //Only one instance
+      try{
+         socket = new ServerSocket(12345);
+         socket.isBound();
+      }
+      catch (Exception e){
+         InterfaceHelper.showSecondInstance();
+         return;
+      }
+      
+
       
       
 

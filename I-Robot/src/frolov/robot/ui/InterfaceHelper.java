@@ -50,6 +50,22 @@ public final class InterfaceHelper{
    
    
    
+   
+   public static void showSecondInstance() {
+      SwingUtilities.invokeLater(new Runnable(){
+         public void run(){
+            JOptionPane.showMessageDialog(null,
+                     "Запущена вторая копия программы",
+                     "Ошибка",
+                     JOptionPane.ERROR_MESSAGE);         }
+      });
+   }
+   
+   
+   
+   
+   
+   
 
 
    public static void showWaiting(final String sMessage){
