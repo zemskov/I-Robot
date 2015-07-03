@@ -51,7 +51,7 @@ public final class InterfaceHelper{
    
    
    
-   public static void showSecondInstance() {
+   public static void showSecondInstance() {      
       SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             JOptionPane.showMessageDialog(null,
@@ -66,50 +66,73 @@ public final class InterfaceHelper{
    
    
    
+   
 
-
+   
    public static void showWaiting(final String sMessage){
-      SwingUtilities.invokeLater(new Runnable(){
-         public void run(){
-            dlgWaiting = new JDialog();
-
-            JPanel panel = new JPanel();
-
-            // panel.setBackground(new java.awt.Color(230, 230, 255));
-
-            JLabel jLabel = new JLabel(sMessage);
-            jLabel.setIcon(iconWating);
-            panel.add(jLabel);
-            dlgWaiting.add(panel);
-            dlgWaiting.setModalExclusionType(JDialog.ModalExclusionType.TOOLKIT_EXCLUDE);
-
-            dlgWaiting.setUndecorated(true);
-            dlgWaiting.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
-
-            dlgWaiting.setSize(130, 45);
-            dlgWaiting.setAlwaysOnTop(true);
-            dlgWaiting.setLocationRelativeTo(null);
-            dlgWaiting.setResizable(false);
-
-            panel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(100, 100, 100)));
-            dlgWaiting.setVisible(true);
-         }
-      });
+      if(SwingUtilities.isEventDispatchThread()){
+         _showWating(sMessage);
+      }
+      else{
+         SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+               _showWating(sMessage);
+            }
+         });
+      }
    }
+   private static void _showWating(String sMessage){
+      dlgWaiting = new JDialog();
+
+      JPanel panel = new JPanel();
+
+      // panel.setBackground(new java.awt.Color(230, 230, 255));
+
+      JLabel jLabel = new JLabel(sMessage);
+      jLabel.setIcon(iconWating);
+      panel.add(jLabel);
+      dlgWaiting.add(panel);
+      dlgWaiting.setModalExclusionType(JDialog.ModalExclusionType.TOOLKIT_EXCLUDE);
+
+      dlgWaiting.setUndecorated(true);
+      dlgWaiting.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+
+      dlgWaiting.setSize(130, 45);
+      dlgWaiting.setAlwaysOnTop(true);
+      dlgWaiting.setLocationRelativeTo(null);
+      dlgWaiting.setResizable(false);
+
+      panel.setBorder(BorderFactory.createLineBorder(new java.awt.Color(100, 100, 100)));
+      dlgWaiting.setVisible(true);
+   }
+   
+   
+
+   
+   
+   
    
 
    
    
    public static void hideWaiting(){
-      SwingUtilities.invokeLater(new Runnable(){
-         public void run(){
-            if(dlgWaiting == null){
+      if(SwingUtilities.isEventDispatchThread()){
+         _hideWaiting();               
+      }
+      else{
+         SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+               _hideWaiting();               
             }
-            else{
-               dlgWaiting.setVisible(false);
-               dlgWaiting = null;
-            }
-         }
-      });
+         });
+      }
+   }
+   private static void _hideWaiting(){
+      if(dlgWaiting == null){
+      }
+      else{
+         dlgWaiting.setVisible(false);
+         dlgWaiting = null;
+      }
    }
 }

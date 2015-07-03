@@ -44,28 +44,23 @@ public class FEConnector{
          return "<?xml version=\"1.0\"?><cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" /></cross-domain-policy>";
       }
       else{
-         try{
-            ICommand command = ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get(sCommand);
-            
-            if(command == null){
-               throw new WebApplicationException(javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE);
-            }
-            else{
-               frolov.robot.Response reponse = command.run();
-               
-               StringBuilder sb = new StringBuilder();
-               ArrayList<String> arliKeys = new ArrayList<String>(reponse.parsedValues.keySet());
-               Collections.sort(arliKeys);            
-               
-               for(String sKey : arliKeys){
-                  sb.append(sKey + "=" + reponse.parsedValues.get(sKey) + "\n");
-               }
-               
-               return sb.toString();
-            }
+         ICommand command = ((RoboConfig) context.getAttribute("roboConfig")).mapCommands.get(sCommand);
+         
+         if(command == null){
+            throw new WebApplicationException(javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE);
          }
-         catch (Exception e){
-            return "error=0";
+         else{
+            frolov.robot.Response reponse = command.run();
+            
+            StringBuilder sb = new StringBuilder();
+            ArrayList<String> arliKeys = new ArrayList<String>(reponse.parsedValues.keySet());
+            Collections.sort(arliKeys);            
+            
+            for(String sKey : arliKeys){
+               sb.append(sKey + "=" + reponse.parsedValues.get(sKey) + "\n");
+            }
+            
+            return sb.toString();
          }
       }
    }

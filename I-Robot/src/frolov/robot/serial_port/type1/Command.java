@@ -7,12 +7,16 @@ import javax.xml.bind.*;
 import jssc.*;
 import org.apache.commons.logging.*;
 import frolov.robot.*;
+import frolov.robot.ui.*;
 
 
 
 public class Command implements ICommand{
    private static Log log = LogFactory.getLog(Main.class);
    private static final String LOG = "[Main] ";
+   
+   
+   private static final int COMMAND_TIMEOUT = 2000;
    
    
    private final XCommand xCommand;
@@ -58,9 +62,21 @@ public class Command implements ICommand{
       
       Main.serialPort.writeBytes(DatatypeConverter.parseHexBinary(xCommand.code));
       
+      
+      long lCommandStart = System.currentTimeMillis();
       synchronized(Command.this){
-         this.wait(1000);
+         //Let's wait for data
+         this.wait(COMMAND_TIMEOUT);
       }
+      if(System.currentTimeMillis() - lCommandStart > COMMAND_TIMEOUT) {
+         //Time is out!
+         //Seems the Robot died.
+         //RIP
+         Main.serialPort.closePort();
+         Main.serialPort = null;
+         Main.robotLost();
+      }
+
       
       Response response = new Response();
       response.rawData = new byte[bbuf.array().length];
@@ -68,6 +84,11 @@ public class Command implements ICommand{
       System.arraycopy(bbuf.array(), 0, response.rawData, 0, bbuf.array().length);
       return response;
    }
+   
+   
+   
+   
+   
    
    
    
