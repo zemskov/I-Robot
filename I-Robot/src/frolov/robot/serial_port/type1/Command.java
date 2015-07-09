@@ -45,6 +45,10 @@ public class Command implements ICommand{
 
    
    public Response run() throws Exception{
+      if(Main.serialPort == null){
+         throw new Exception("Port is closed");
+      }
+      
       // Listens for incoming data
       try{
          Main.serialPort.removeEventListener();

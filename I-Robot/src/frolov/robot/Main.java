@@ -244,17 +244,6 @@ public class Main extends JFrame{
             }
          });
       }
-
-      synchronized (Main.class){
-         try{
-            Main.class.wait();
-         }
-         catch (InterruptedException e){
-            // Let's quit then
-            System.exit(0);
-         }
-      }
-      
    }
    private static void _robotLost(){
       if(JOptionPane.showOptionDialog(null,
@@ -263,10 +252,6 @@ public class Main extends JFrame{
                                       JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {
                                       "Повторить поиск", "Выход" }, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
-         synchronized(Main.class){
-            Main.class.notifyAll();
-         }
-         
          Main.findRobot();
          
          JOptionPane.showMessageDialog(null,
@@ -314,13 +299,17 @@ public class Main extends JFrame{
                });
             }
             
-            synchronized(Main.class){
-               try{
-                  Main.class.wait();
-               }
-               catch (InterruptedException e){
-                  // Let's quit then
-                  System.exit(0);
+            if(SwingUtilities.isEventDispatchThread()){
+            }
+            else {
+               synchronized (Main.class){
+                  try{
+                     Main.class.wait();
+                  }
+                  catch (InterruptedException e){
+                     // Let's quit then
+                     System.exit(0);
+                  }
                }
             }
             continue;
