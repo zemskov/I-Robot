@@ -252,12 +252,19 @@ public class Main extends JFrame{
                                       JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {
                                       "Повторить поиск", "Выход" }, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
-         Main.findRobot();
          
-         JOptionPane.showMessageDialog(null,
-                                       "Соединение восстановлено!",
-                                       Main.serialPort.getPortName(),
-                                       JOptionPane.INFORMATION_MESSAGE);
+         Thread th = new Thread() {
+            public void run() {
+               Main.findRobot();
+         
+               JOptionPane.showMessageDialog(null,
+                                             "Соединение восстановлено!",
+                                             Main.serialPort.getPortName(),
+                                             JOptionPane.INFORMATION_MESSAGE);
+            }
+         };
+         
+         th.start();
       }
       else{
          // Let's quit then

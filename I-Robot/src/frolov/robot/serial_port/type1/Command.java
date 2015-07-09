@@ -7,7 +7,6 @@ import javax.xml.bind.*;
 import jssc.*;
 import org.apache.commons.logging.*;
 import frolov.robot.*;
-import frolov.robot.ui.*;
 
 
 
@@ -44,7 +43,7 @@ public class Command implements ICommand{
 
 
    
-   public Response run() throws Exception{
+   public synchronized Response run() throws Exception{
       if(Main.serialPort == null){
          throw new Exception("Port is closed");
       }
@@ -76,9 +75,19 @@ public class Command implements ICommand{
          //Time is out!
          //Seems the Robot died.
          //RIP
+         Main.serialPort.purgePort(255);
+         Main.serialPort.removeEventListener();
          Main.serialPort.closePort();
          Main.serialPort = null;
-         Main.robotLost();
+         
+         Thread th = new Thread(){
+            public void run() {
+               Main.robotLost();
+            }
+         };
+         th.start();
+         
+         throw new Exception("Port is closed");
       }
 
       
@@ -183,7 +192,7 @@ public class Command implements ICommand{
                   Main.setIconImage(sIconName);
                }
             }
-            catch(SerialPortException e){
+            catch(Exception e){
             }
          }
       }
