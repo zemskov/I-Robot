@@ -359,8 +359,8 @@ void loop()
     {
         if (prevInByte != 0)
         {
-            Motor1(0, false);   //turn off motor1
-            Motor2(0, false);   //turn off motor2
+//            Motor1(0, false);   //turn off motor1
+//            Motor2(0, false);   //turn off motor2
         }
         prevInByte = 0;         //clear last received mask
         state.clear();          //clear information about measurements of analogs
