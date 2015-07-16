@@ -124,6 +124,7 @@ public class SerialPortDummyDetector implements IPortDetector{
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
             serialPort.purgePort(255);
             
+            //The MacOS hack
             try{
                Thread.sleep(2000);
             }
@@ -132,7 +133,7 @@ public class SerialPortDummyDetector implements IPortDetector{
             }
 
             // Send some data
-            serialPort.writeByte((byte) 0);
+            serialPort.writeByte((byte) 32);
             log.debug(LOG + portName + " Test data sent.");
             
             Thread.sleep(MAX_DETECTION_TIME);
@@ -162,8 +163,23 @@ public class SerialPortDummyDetector implements IPortDetector{
 
          public void serialEvent(SerialPortEvent event){
             if(event.isRXCHAR() && event.getEventValue() > 0){
+               
+               try{
+                  String data = portChecker.serialPort.readString(event.getEventValue());
+                  log.info(LOG + portChecker.portName + "=" + data);
+                  
+                  if(data.startsWith("S")){
+                     SerialPortDummyDetector.gotIt(portChecker.serialPort);
+                  }
+               }
+               catch (SerialPortException e){
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+               }
+               
+               
                //log.debug(LOG + portChecker.portName);
-               SerialPortDummyDetector.gotIt(portChecker.serialPort);
+               //SerialPortDummyDetector.gotIt(portChecker.serialPort);
                
                // try{
                // Получаем ответ от устройства, обрабатываем данные и т.д.
