@@ -1,4 +1,4 @@
-package frolov.robot.serial_port.type1;
+package scratchduino.robot.serial_port.type1;
 
 import java.util.*;
 import javax.xml.bind.annotation.*;

@@ -1,4 +1,4 @@
-package frolov.robot;
+package scratchduino.robot;
 
 import jssc.*;
 

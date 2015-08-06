@@ -1,8 +1,8 @@
-package frolov.robot.rest.scratch;
+package scratchduino.robot.rest.scratch;
 
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.servlet.*;
-import frolov.robot.*;
+import scratchduino.robot.*;
 
 public class ScratchRest implements IRest{
    
@@ -28,7 +28,7 @@ public class ScratchRest implements IRest{
       // Tells the Jersey Servlet which REST service/class to load.
       jerseyServlet.setInitParameter(
          "com.sun.jersey.config.property.packages",
-         "frolov.robot.rest.scratch");
+         "scratchduino.robot.rest.scratch");
 
       try{
          jettyServer.start();

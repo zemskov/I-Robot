@@ -1,9 +1,9 @@
-package frolov.robot.ui;
+package scratchduino.robot.ui;
 
 import java.awt.*;
 import javax.swing.*;
 import org.apache.commons.logging.*;
-import frolov.robot.*;
+import scratchduino.robot.*;
 
 public class DiagnosticPanelJoystick extends JFrame{
    private static Log log = LogFactory.getLog(DiagnosticPanelJoystick.class);

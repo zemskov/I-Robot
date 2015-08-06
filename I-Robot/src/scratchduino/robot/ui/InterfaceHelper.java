@@ -1,4 +1,4 @@
-package frolov.robot.ui;
+package scratchduino.robot.ui;
 
 import java.awt.*;
 import javax.swing.*;
@@ -55,8 +55,8 @@ public final class InterfaceHelper{
       SwingUtilities.invokeLater(new Runnable(){
          public void run(){
             JOptionPane.showMessageDialog(null,
-                     "Запущена вторая копия программы",
-                     "Ошибка",
+                     "Launched a second instance of the programm.",
+                     "Error",
                      JOptionPane.ERROR_MESSAGE);         }
       });
    }

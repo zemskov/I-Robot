@@ -1,9 +1,9 @@
-package frolov.robot.serial_port;
+package scratchduino.robot.serial_port;
 
 import java.util.*;
 import jssc.*;
 import org.apache.commons.logging.*;
-import frolov.robot.*;
+import scratchduino.robot.*;
 
 
 
@@ -15,7 +15,7 @@ public class SerialPortDummyDetector implements IPortDetector{
    private static SerialPort serialPort = null;
    
    //We wait for 10 sec
-   private static final int MAX_DETECTION_TIME = 10000;
+   private static final int MAX_DETECTION_TIME = 4000;
    
 
    public SerialPort findRobot(){
@@ -32,46 +32,67 @@ public class SerialPortDummyDetector implements IPortDetector{
          PortChecker pc = new PortChecker(sPortName);
          listCheckers.add(pc);
          pc.start();
-      }
-
-      //Let's wait for 10 sec
-      try{
-         synchronized(SerialPortDummyDetector.class){
-            SerialPortDummyDetector.class.wait(MAX_DETECTION_TIME);
-         }
-      }
-      catch(Exception e){
-         log.error(LOG, e);
-      }
-      finally{
-         log.trace(LOG + "Cleanup");
          
-         for(PortChecker pc : listCheckers){
-            try{
-               pc.serialPort.purgePort(255);
-               pc.serialPort.removeEventListener();
-
-               if(serialPort == null || serialPort.getPortName() != pc.portName) {
-                  //Note
-                  //We close all alien ports here
-                  //But keep our robot opened.
-                  pc.serialPort.closePort();
-                  
-                  pc.interrupt();
-               }
-            }
-            catch (SerialPortException e){
-               log.error(LOG, e);
-            }
+         try{
+            Thread.sleep(MAX_DETECTION_TIME + 10);
          }
-      }
+         catch (InterruptedException e){
+         }
+         
+         if(serialPort == null || !serialPort.isOpened()){
+            log.info(LOG + "Seems no Robot found.");
+            continue;
+         }
+         else{
+            log.info(LOG + "We did it! Robot is here: " + serialPort.getPortName());
+         }
+      }      
       
-      if(serialPort == null){
-         log.info(LOG + "Seems no Robot found.");
-      }
-      else{
-         log.info(LOG + "We did it! Robot is here: " + serialPort.getPortName());
-      }
+
+//      for(String sPortName : arrPorts){
+//         PortChecker pc = new PortChecker(sPortName);
+//         listCheckers.add(pc);
+//         pc.start();
+//      }
+//
+//      //Let's wait for 10 sec
+//      try{
+//         synchronized(SerialPortDummyDetector.class){
+//            SerialPortDummyDetector.class.wait(MAX_DETECTION_TIME);
+//         }
+//      }
+//      catch(Exception e){
+//         log.error(LOG, e);
+//      }
+//      finally{
+//         log.trace(LOG + "Cleanup");
+//         
+//         for(PortChecker pc : listCheckers){
+//            try{
+//               pc.serialPort.purgePort(255);
+//               pc.serialPort.removeEventListener();
+//
+//               if(serialPort == null || serialPort.getPortName() != pc.portName) {
+//                  //Note
+//                  //We close all alien ports here
+//                  //But keep our robot opened.
+//                  pc.serialPort.closePort();
+//                  
+//                  pc.interrupt();
+//               }
+//            }
+//            catch (SerialPortException e){
+//               log.error(LOG, e);
+//            }
+//         }
+//      }
+//      
+//      if(serialPort == null){
+//         log.info(LOG + "Seems no Robot found.");
+//      }
+//      else{
+//         log.info(LOG + "We did it! Robot is here: " + serialPort.getPortName());
+//      }
       
       return serialPort;
    }
@@ -80,8 +101,10 @@ public class SerialPortDummyDetector implements IPortDetector{
    
    private static void gotIt(SerialPort serialPort){
       synchronized(SerialPortDummyDetector.class){
-         SerialPortDummyDetector.serialPort = serialPort;
-         SerialPortDummyDetector.class.notifyAll();
+         if(SerialPortDummyDetector.serialPort == null){         
+            SerialPortDummyDetector.serialPort = serialPort;
+            SerialPortDummyDetector.class.notifyAll();
+         }
       }
    }
    
@@ -115,7 +138,7 @@ public class SerialPortDummyDetector implements IPortDetector{
             serialPort.addEventListener(new PortReader(this), SerialPort.MASK_RXCHAR);
 
             // Something standart
-            serialPort.setParams(SerialPort.BAUDRATE_9600,
+            serialPort.setParams(Configs.getSpeed(),
                                  SerialPort.DATABITS_8,
                                  SerialPort.STOPBITS_1,
                                  SerialPort.PARITY_NONE);
@@ -136,7 +159,7 @@ public class SerialPortDummyDetector implements IPortDetector{
             serialPort.writeByte((byte) 32);
             log.debug(LOG + portName + " Test data sent.");
             
-            Thread.sleep(MAX_DETECTION_TIME);
+            Thread.sleep(MAX_DETECTION_TIME - 10);
          }
          catch (InterruptedException e){
          }
@@ -154,6 +177,8 @@ public class SerialPortDummyDetector implements IPortDetector{
       
       private static class PortReader implements SerialPortEventListener{
          private PortChecker portChecker;
+         
+         private StringBuilder sb = new StringBuilder();
 
 
          public PortReader(PortChecker portChecker){
@@ -166,9 +191,11 @@ public class SerialPortDummyDetector implements IPortDetector{
                
                try{
                   String data = portChecker.serialPort.readString(event.getEventValue());
+                  sb.append(data);
+                  
                   log.info(LOG + portChecker.portName + "=" + data);
                   
-                  if(data.startsWith("S")){
+                  if(sb.toString().contains("SCRATCH")){
                      SerialPortDummyDetector.gotIt(portChecker.serialPort);
                   }
                }

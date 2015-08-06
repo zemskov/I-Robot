@@ -1,4 +1,4 @@
-package frolov.robot;
+package scratchduino.robot;
 
 
 import java.awt.*;
@@ -11,7 +11,7 @@ import jssc.*;
 import org.apache.commons.logging.*;
 import org.springframework.context.*;
 import org.springframework.context.support.*;
-import frolov.robot.ui.*;
+import scratchduino.robot.ui.*;
 
 
 
@@ -36,7 +36,7 @@ public class Main extends JFrame{
       Image image = Toolkit.getDefaultToolkit().getImage(JFrame.class.getResource("/loaderB32.gif"));
       
    
-      trayIcon = new TrayIcon(image, "Скратчдуино v2.0", popup);
+      trayIcon = new TrayIcon(image, "ScratchDuino v2.0", popup);
    }
 
    
@@ -49,7 +49,7 @@ public class Main extends JFrame{
       
       //panel.setBackground(new java.awt.Color(230, 230, 255));
       
-      JLabel jLabel = new JLabel(" Ожидайте...");
+      JLabel jLabel = new JLabel(" Please wait...");
       jLabel.setIcon(iconWating);
       panel.add(jLabel);
       dlgWaiting.add(panel);
@@ -99,7 +99,7 @@ public class Main extends JFrame{
          socket.isBound();
       }
       catch (Exception e){
-         InterfaceHelper.showSecondInstance();
+//         InterfaceHelper.showSecondInstance();
          return;
       }
       
@@ -122,12 +122,12 @@ public class Main extends JFrame{
       SwingUtilities.invokeAndWait(new Runnable(){
          public void run(){
             if(JOptionPane.showOptionDialog(null, 
-                     "Робот найден на порту " + serialPort.getPortName(), 
-                     "Готов к запуску", 
+                     "The ScratchDuino device has been found on Port " + serialPort.getPortName(), 
+                     "I am ready to start", 
                      JOptionPane.YES_NO_OPTION, 
                      JOptionPane.INFORMATION_MESSAGE, 
                      null, 
-                     new String[]{"Начать работу", "Диагностика"}, // this is the array
+                     new String[]{"Start", "Diagnostic"}, // this is the array
                      "default") == JOptionPane.YES_OPTION){
                bStartDiagnostic.set(false);
             }
@@ -247,10 +247,10 @@ public class Main extends JFrame{
    }
    private static void _robotLost(){
       if(JOptionPane.showOptionDialog(null,
-                                      "Потеряна связь с роботом!",
-                                      "Ошибка",
+                                      "Connection lost!",
+                                      "Error",
                                       JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {
-                                      "Повторить поиск", "Выход" }, // this is the array
+                                      "Reconnect", "Exit" }, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
          
          Thread th = new Thread() {
@@ -258,7 +258,7 @@ public class Main extends JFrame{
                Main.findRobot();
          
                JOptionPane.showMessageDialog(null,
-                                             "Соединение восстановлено!",
+                                             "The connection restored!",
                                              Main.serialPort.getPortName(),
                                              JOptionPane.INFORMATION_MESSAGE);
             }
@@ -287,14 +287,14 @@ public class Main extends JFrame{
       
       
       while(true){
-         InterfaceHelper.showWaiting("Ищем Робота...");
+         InterfaceHelper.showWaiting("Looking for device...");
 
          serialPort = roboConfig.portDetecter.findRobot();
 
          InterfaceHelper.hideWaiting();
          
          
-         if(serialPort == null){
+         if(serialPort == null || !serialPort.isOpened()){
             if(SwingUtilities.isEventDispatchThread()){
                _findRobot();
             }
@@ -328,10 +328,10 @@ public class Main extends JFrame{
    }
    private static void _findRobot(){
       if(JOptionPane.showOptionDialog(null,
-                                      "Робот не найден.",
-                                      "Ошибка",
+                                      "The device can not be found.",
+                                      "Error",
                                       JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {
-                                      "Повторить поиск", "Выход" }, // this is the array
+                                      "Let's try again", "Exit" }, // this is the array
                                       "default") == JOptionPane.YES_OPTION){
          
          synchronized(Main.class){

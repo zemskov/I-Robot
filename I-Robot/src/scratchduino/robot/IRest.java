@@ -1,4 +1,4 @@
-package frolov.robot;
+package scratchduino.robot;
 
 public interface IRest{
    

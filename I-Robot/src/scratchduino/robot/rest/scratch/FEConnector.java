@@ -1,4 +1,4 @@
-package frolov.robot.rest.scratch;
+package scratchduino.robot.rest.scratch;
 
 import java.util.*;
 import javax.servlet.*;
@@ -6,7 +6,7 @@ import javax.servlet.http.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import org.apache.commons.logging.*;
-import frolov.robot.*;
+import scratchduino.robot.*;
 
 
 
@@ -40,6 +40,8 @@ public class FEConnector{
       
       String sCommand = listParameters.remove(0);
       
+      synchronized(FEConnector.class) {
+      
       if("crossdomain.xml".equals(sCommand)){
          return "<?xml version=\"1.0\"?><cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" /></cross-domain-policy>";
       }
@@ -51,7 +53,7 @@ public class FEConnector{
                throw new WebApplicationException(javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE);
             }
             else{
-               frolov.robot.Response reponse = command.run();
+               scratchduino.robot.Response reponse = command.run();
                
                StringBuilder sb = new StringBuilder();
                ArrayList<String> arliKeys = new ArrayList<String>(reponse.parsedValues.keySet());
@@ -67,6 +69,7 @@ public class FEConnector{
          catch (Exception e){
             return "error=0";
          }
+      }
       }
    }
 }

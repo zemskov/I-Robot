@@ -1,4 +1,4 @@
-package frolov.robot.serial_port.type1;
+package scratchduino.robot.serial_port.type1;
 
 import java.io.*;
 import java.nio.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import javax.xml.bind.*;
 import jssc.*;
 import org.apache.commons.logging.*;
-import frolov.robot.*;
+import scratchduino.robot.*;
 
 
 
